@@ -427,21 +427,21 @@ const priorityRank = {critical:0, high:1, medium:2, low:3};
 function durToMin(s){const h=(s.match(/(\d+)h/)||['','0'])[1];const m=(s.match(/(\d+)m/)||['','0'])[1];return parseInt(h)*60+parseInt(m)}
 
 const courses = [
-  {n:1, title:"Networking Foundations: Networking Basics", dur:"1h 49m", level:"Beginner", rating:4.8, reviews:"11,534", imp:10, priority:"critical", url:"https://www.linkedin.com/learning/networking-foundations-networking-basics"},
-  {n:2, title:"Cisco Networking Foundations: Fundamentals of Cisco Networking", dur:"2h 3m", level:"Beginner", rating:4.8, reviews:"1,769", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-fundamentals-of-cisco-networking"},
-  {n:3, title:"Cisco Networking Foundations: IP Addressing", dur:"1h 35m", level:"Beginner", rating:4.8, reviews:"543", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-ip-addressing"},
-  {n:4, title:"Cisco Networking Foundations: Switching and Routing", dur:"1h 50m", level:"Beginner", rating:4.7, reviews:"1,357", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-switching-and-routing"},
-  {n:5, title:"Cisco Networking Foundations: Wireless, Services, Security & Virtualization", dur:"2h 28m", level:"Beginner", rating:4.8, reviews:"404", imp:7, priority:"high", url:"https://www.linkedin.com/learning/cisco-networking-foundations-wireless-networks-services-security-and-virtualization"},
-  {n:6, title:"CCST Networking (100-150) Cert Prep", dur:"10h 10m", level:"Beginner", rating:4.8, reviews:"116", imp:10, priority:"high", url:"https://www.linkedin.com/learning/cisco-certified-support-technician-ccst-networking-100-150-cert-prep"},
-  {n:7, title:"CCNA v1.1 (200-301) Cert Prep", dur:"18h 22m", level:"Intermediate", rating:4.8, reviews:"424", imp:20, priority:"critical", url:"https://www.linkedin.com/learning/cisco-certified-network-associate-ccna-v1-1-200-301-cert-prep"},
-  {n:8, title:"CCNP Enterprise: ENCOR v1.2 (350-401) Cert Prep", dur:"16h 21m", level:"Intermediate", rating:4.7, reviews:"29", imp:12, priority:"high", url:"https://www.linkedin.com/learning/cisco-ccnp-enterprise-encor-v1-2-350-401-cert-prep"},
-  {n:9, title:"CCNP Enterprise: ENARSI (300-410) Cert Prep", dur:"13h 21m", level:"Intermediate", rating:4.8, reviews:"53", imp:10, priority:"medium", url:"https://www.linkedin.com/learning/cisco-ccnp-enterprise-enarsi-300-410-cert-prep"},
-  {n:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep", dur:"13h 2m", level:"Intermediate", rating:4.8, reviews:"92", imp:7, priority:"medium", url:"https://www.linkedin.com/learning/cisco-certified-devnet-associate-devasc-1-1-200-901-cert-prep"},
-  {n:11, title:"Learning Subnetting", dur:"1h 35m", level:"Beginner", rating:4.8, reviews:"1,107", imp:6, priority:"high", url:"https://www.linkedin.com/learning/learning-subnetting-2019"},
-  {n:12, title:"Wireless Networking Essential Training", dur:"1h 19m", level:"Intermediate", rating:4.7, reviews:"1,450", imp:5, priority:"medium", url:"https://www.linkedin.com/learning/wireless-networking-essential-training"},
-  {n:13, title:"CCNA Cybersecurity (200-201) v1.2 Cert Prep", dur:"5h 52m", level:"Intermediate", rating:4.5, reviews:"21", imp:8, priority:"high", url:"https://www.linkedin.com/learning/ccna-cybersecurity-200-201-v1-2-cert-prep"},
-  {n:14, title:"Learning IP Addressing", dur:"40m", level:"Beginner", rating:4.8, reviews:"1,122", imp:5, priority:"medium", url:"https://www.linkedin.com/learning/learning-ip-addressing-2"},
-  {n:15, title:"CCST Cybersecurity (100-160) Cert Prep", dur:"6h 26m", level:"Intermediate", rating:4.8, reviews:"32", imp:7, priority:"high", url:"https://www.linkedin.com/learning/cisco-certified-support-technician-ccst-cybersecurity-100-160-cert-prep"},
+  {n:1, title:"Networking Foundations: Networking Basics", dur:"1h 49m", level:"Beginner", rating:4.8, reviews:"11,534", imp:10, priority:"critical", url:"https://www.linkedin.com/learning/networking-foundations-networking-basics?u=76281980"},
+  {n:2, title:"Cisco Networking Foundations: Fundamentals of Cisco Networking", dur:"2h 3m", level:"Beginner", rating:4.8, reviews:"1,769", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-fundamentals-of-cisco-networking?u=76281980"},
+  {n:3, title:"Cisco Networking Foundations: IP Addressing", dur:"1h 35m", level:"Beginner", rating:4.8, reviews:"543", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-ip-addressing?u=76281980"},
+  {n:4, title:"Cisco Networking Foundations: Switching and Routing", dur:"1h 50m", level:"Beginner", rating:4.7, reviews:"1,357", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-switching-and-routing?u=76281980"},
+  {n:5, title:"Cisco Networking Foundations: Wireless, Services, Security & Virtualization", dur:"2h 28m", level:"Beginner", rating:4.8, reviews:"404", imp:7, priority:"high", url:"https://www.linkedin.com/learning/cisco-networking-foundations-wireless-networks-services-security-and-virtualization?u=76281980"},
+  {n:6, title:"CCST Networking (100-150) Cert Prep", dur:"10h 10m", level:"Beginner", rating:4.8, reviews:"116", imp:10, priority:"high", url:"https://www.linkedin.com/learning/cisco-certified-support-technician-ccst-networking-100-150-cert-prep?u=76281980"},
+  {n:7, title:"CCNA v1.1 (200-301) Cert Prep", dur:"18h 22m", level:"Intermediate", rating:4.8, reviews:"424", imp:20, priority:"critical", url:"https://www.linkedin.com/learning/cisco-certified-network-associate-ccna-v1-1-200-301-cert-prep?u=76281980"},
+  {n:8, title:"CCNP Enterprise: ENCOR v1.2 (350-401) Cert Prep", dur:"16h 21m", level:"Intermediate", rating:4.7, reviews:"29", imp:12, priority:"high", url:"https://www.linkedin.com/learning/cisco-ccnp-enterprise-encor-v1-2-350-401-cert-prep?u=76281980"},
+  {n:9, title:"CCNP Enterprise: ENARSI (300-410) Cert Prep", dur:"13h 21m", level:"Intermediate", rating:4.8, reviews:"53", imp:10, priority:"medium", url:"https://www.linkedin.com/learning/cisco-ccnp-enterprise-enarsi-300-410-cert-prep?u=76281980"},
+  {n:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep", dur:"13h 2m", level:"Intermediate", rating:4.8, reviews:"92", imp:7, priority:"medium", url:"https://www.linkedin.com/learning/cisco-certified-devnet-associate-devasc-1-1-200-901-cert-prep?u=76281980"},
+  {n:11, title:"Learning Subnetting", dur:"1h 35m", level:"Beginner", rating:4.8, reviews:"1,107", imp:6, priority:"high", url:"https://www.linkedin.com/learning/learning-subnetting-2019?u=76281980"},
+  {n:12, title:"Wireless Networking Essential Training", dur:"1h 19m", level:"Intermediate", rating:4.7, reviews:"1,450", imp:5, priority:"medium", url:"https://www.linkedin.com/learning/wireless-networking-essential-training?u=76281980"},
+  {n:13, title:"CCNA Cybersecurity (200-201) v1.2 Cert Prep", dur:"5h 52m", level:"Intermediate", rating:4.5, reviews:"21", imp:8, priority:"high", url:"https://www.linkedin.com/learning/ccna-cybersecurity-200-201-v1-2-cert-prep?u=76281980"},
+  {n:14, title:"Learning IP Addressing", dur:"40m", level:"Beginner", rating:4.8, reviews:"1,122", imp:5, priority:"medium", url:"https://www.linkedin.com/learning/learning-ip-addressing-2?u=76281980"},
+  {n:15, title:"CCST Cybersecurity (100-160) Cert Prep", dur:"6h 26m", level:"Intermediate", rating:4.8, reviews:"32", imp:7, priority:"high", url:"https://www.linkedin.com/learning/cisco-certified-support-technician-ccst-cybersecurity-100-160-cert-prep?u=76281980"},
 ].map(c => ({...c, durMin:durToMin(c.dur), priorityRank:priorityRank[c.priority]}));
 
 // ─── SORTING ────────────────────────────────────────────
@@ -1164,7 +1164,7 @@ function generatePlannerData(){
       const reviews = learnedTopics.filter(t => srIntervals.some(i => t.day + i === d));
       reviews.forEach(r => tasks.push({type:"review", tag:"review", text:`📖 Review: ${r.topic}`, course:r.title}));
     } else if (todaysSections.length > 0) {
-      // Add each section as a task
+      // Add each section as a task — watch only, no separate practice task
       todaysSections.forEach(s => {
         const priorityTag = s.priority === 'critical' ? '🔴' : s.priority === 'high' ? '🟡' : '🟢';
         const sectionNum = s.sectionIdx + 1;
@@ -1174,12 +1174,6 @@ function generatePlannerData(){
           course:s.title,
           courseNum:s.course,
           sectionIdx:s.sectionIdx,
-          url:s.url
-        });
-        tasks.push({
-          type:"practice", tag:"practice",
-          text:`✍️ Notes + practice: ${s.sectionName}`,
-          course:s.title,
           url:s.url
         });
         learnedTopics.push({day:d, course:s.course, title:s.title, topic:s.sectionName});
