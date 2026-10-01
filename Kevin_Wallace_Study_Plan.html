@@ -1102,6 +1102,38 @@ let plannerData = [];
 let plannerView = 'today';
 let plannerProgress = {};
 
+// Video URL slugs for each course section (maps section index to video slug)
+// These are the individual video URLs within each LinkedIn Learning course
+const videoSlugs = {
+  1: ["welcome-to-the-network","a-networks-purpose-in-life","network-addresses","pieces-and-parts-of-a-network","the-osi-model","network-services","wireless-networks","emerging-trends-in-networking","conclusion"],
+  2: ["learn-the-fundamentals-of-cisco-networking","network-basics","network-concepts-and-components","network-cabling","cisco-router-and-catalyst-switch-configuration","conclusion"],
+  3: ["learn-ip-addressing","ipv4-addressing","ipv6-addressing","conclusion"],
+  4: ["welcome","ethernet-switching","ip-routing","conclusion"],
+  5: ["welcome","network-services","network-security","wireless-networks","network-virtualization","conclusion"],
+  6: ["welcome-to-the-course","fundamental-networking-concepts","network-models-and-protocols","cloud-computing","conclusion","introduction","ipv4-addressing","ipv4-subnetting","ipv6-addressing","ipv6-address-types","conclusion","introduction","physically-connecting-network-devices","wirelessly-connecting-network-devices","checking-network-connectivity","network-infrastructure","conclusion","introduction","cisco-ios","diagnosing-network-issues","network-security","exam-preparation","conclusion"],
+  7: ["diving-into-the-course","common-network-components","common-network-architectures-and-designs","network-cabling","binary-numbering","ipv4-address-characteristics","ipv4-address-assignment-verification-and-name-resolution","subnetting","ipv6-address-format-and-communication","ipv6-address-types","ethernet-switch-fundamentals","neighbor-discovery","virtual-lans-vlans","trunking","spanning-tree-protocol-stp","etherchannel","routing-fundamentals","static-routing","ospfv2-routing","first-hop-redundancy-protocols-fhrps","overview-of-wireless-networks","wireless-network-configuration","network-address-translation-nat","network-time-protocol-ntp","dynamic-host-configuration-protocol-dhcp","network-management-services","quality-of-service-qos","threats-and-defense","access-control-lists-acls","layer-2-security-features","software-defined-networking-sdn","configuration-management","exam-preparation","conclusion"],
+  8: ["welcome-to-the-course","enterprise-architecture","virtualization-technologies","infrastructure-technologies","network-management","network-security","network-automation","exam-preparation"],
+  9: ["welcome-to-enarsi-part-1","layer-3-technologies","conclusion","introduction","troubleshooting-routing-protocols","conclusion","introduction","vpn-technologies","enterprise-network-security","conclusion","introduction","network-service-troubleshooting","exam-preparation","conclusion"],
+  10: ["course-introduction","data-formats","data-parsing-with-python","common-development-methods","organizing-code","common-design-methods","git-operations","rest-api","http-response-codes","api-authentication-mechanisms","common-api-styles","cisco-sdk","cisco-network-management-platforms-and-apis","cisco-compute-management-platforms-and-apis","cisco-collaboration-platforms-and-apis","cisco-security-platforms-and-apis","nexus-os-programmability","devnet-resources","model-driven-programmability","application-deployment-models","application-deployment-types","application-deployment-considerations","automation-with-data-models","management","network-simulation-and-test-tools","infrastructure-automation-considerations","data-interpretation","code-review-process","common-networking-structures","common-networking-components","planes-of-operation","ip-services","common-protocols","application-connectivity-issues","course-wrap-up"],
+  11: ["simplify-ip-subnetting","the-structure-of-ipv4-addresses","types-of-ipv4-communication","binary-numbers","basic-subnetting","advanced-subnetting","conclusion"],
+  12: ["welcome-to-wireless-networking","wireless-lan-designs","selecting-wi-fi-channels","service-sets","wi-fi-radio-technologies","wi-fi-standards","wireless-security","installing-an-autonomous-ap","installing-a-lightweight-ap","conclusion"],
+  13: ["welcome-to-the-course","foundations-of-digital-defense","threat-detection-and-surveillance","endpoint-protection-and-analysis","network-traffic-analysis-and-interpretation","cybersecurity-governance-and-best-practices","exam-preparation","conclusion"],
+  14: ["ip-addressing-for-internet-communications","learning-ip-addressing","conclusion"],
+  15: ["welcome-to-the-course","cybersecurity-essentials-and-core-concepts","threat-landscape-and-attack-motives","strengthening-your-security-posture","network-foundations-and-security-fundamentals","controlling-access-and-protecting-the-network-edge","operating-system-security-and-network-tools","system-maintenance-updates-and-logging","security-assessment-and-risk-analysis","security-incident-response","exam-preparation","congratulations-and-next-steps"],
+};
+
+function getVideoUrl(courseNum, sectionIdx, courseUrl){
+  const slugs = videoSlugs[courseNum];
+  if(slugs && slugs[sectionIdx]){
+    // Extract the course slug from the course URL
+    const match = courseUrl.match(/\/learning\/([^?]+)/);
+    if(match){
+      return `https://www.linkedin.com/learning/${match[1]}/${slugs[sectionIdx]}?u=76281980`;
+    }
+  }
+  return courseUrl;
+}
+
 function generatePlannerData(){
   const startDate = new Date(2026, 9, 1); // Oct 1, 2026
   const totalDays = Math.max(1, Math.ceil((plannerDeadline - startDate) / (1000*60*60*24)) + 1);
@@ -1164,17 +1196,18 @@ function generatePlannerData(){
       const reviews = learnedTopics.filter(t => srIntervals.some(i => t.day + i === d));
       reviews.forEach(r => tasks.push({type:"review", tag:"review", text:`📖 Review: ${r.topic}`, course:r.title}));
     } else if (todaysSections.length > 0) {
-      // Add each section as a task — watch only, no separate practice task
+      // Add each section as a task — watch only, with individual video links
       todaysSections.forEach(s => {
         const priorityTag = s.priority === 'critical' ? '🔴' : s.priority === 'high' ? '🟡' : '🟢';
         const sectionNum = s.sectionIdx + 1;
+        const videoUrl = getVideoUrl(s.course, s.sectionIdx, s.url);
         tasks.push({
           type:"new", tag:"new",
           text:`${priorityTag} Lesson ${sectionNum}/${s.totalSections}: ${s.sectionName}`,
           course:s.title,
           courseNum:s.course,
           sectionIdx:s.sectionIdx,
-          url:s.url
+          url:videoUrl
         });
         learnedTopics.push({day:d, course:s.course, title:s.title, topic:s.sectionName});
       });
