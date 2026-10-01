@@ -171,6 +171,25 @@
   .overall-bar-wrap{background:var(--bg);border-radius:8px;height:14px;overflow:hidden;border:1px solid var(--border)}
   .overall-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:8px;width:0%;transition:width .5s}
 
+  /* Notification Banner */
+  .notif-banner{background:linear-gradient(135deg,rgba(79,156,255,.12),rgba(34,197,94,.08));border:2px solid var(--accent);border-radius:14px;padding:20px 24px;margin-bottom:24px;position:relative;overflow:hidden;animation:pulseGlow 3s ease-in-out infinite}
+  @keyframes pulseGlow{0%,100%{box-shadow:0 0 5px rgba(79,156,255,.2)}50%{box-shadow:0 0 20px rgba(79,156,255,.4)}}
+  .notif-banner .notif-close{position:absolute;top:12px;right:16px;cursor:pointer;font-size:1.2rem;color:var(--muted);background:none;border:none}
+  .notif-banner .notif-close:hover{color:var(--text)}
+  .notif-content{display:flex;align-items:center;gap:16px}
+  .notif-icon{font-size:2.5rem;flex-shrink:0;animation:bounce 2s ease-in-out infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .notif-text{flex:1}
+  .notif-text h3{font-size:1.1rem;margin-bottom:4px;color:var(--accent)}
+  .notif-text p{font-size:.88rem;color:var(--text);line-height:1.5}
+  .notif-text .notif-task{font-size:.82rem;color:var(--muted);margin-top:6px;padding:8px 12px;background:var(--card);border-radius:8px;border-left:3px solid var(--accent2)}
+  .notif-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .notif-btn{padding:8px 18px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;text-decoration:none;display:inline-block;text-align:center}
+  .notif-btn-primary{background:var(--accent);color:#fff}
+  .notif-btn-primary:hover{background:#3a8eef}
+  .notif-btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+  .notif-btn-secondary:hover{border-color:var(--accent)}
+
   /* Responsive */
   @media(max-width:768px){
     .timeline{grid-template-columns:1fr}
@@ -200,19 +219,72 @@
     </div>
   </div>
 
-  <!-- OVERALL PROGRESS -->
-  <div class="section">
-    <h2><span class="icon">📈</span> Overall Progress</h2>
-    <div class="overall-progress">
-      <div class="label"><span>Completion</span><span id="pctLabel">0%</span></div>
-      <div class="overall-bar-wrap"><div class="overall-bar" id="overallBar"></div></div>
+  <!-- NOTIFICATION BANNER -->
+  <div class="notif-banner" id="notifBanner">
+    <button class="notif-close" onclick="dismissNotif()">✕</button>
+    <div class="notif-content">
+      <div class="notif-icon" id="notifIcon">🔔</div>
+      <div class="notif-text">
+        <h3 id="notifTitle">Time to Study!</h3>
+        <p id="notifMsg">Loading today's tasks...</p>
+        <div class="notif-task" id="notifTask"></div>
+        <div class="notif-actions">
+          <a href="#plannerSection" class="notif-btn notif-btn-primary" onclick="scrollToPlanner()">📍 Go to Today's Plan</a>
+          <button class="notif-btn notif-btn-secondary" onclick="enableNotifications()">🔔 Enable Daily Reminders</button>
+          <button class="notif-btn notif-btn-secondary" onclick="dismissNotif()">Snooze</button>
+        </div>
+      </div>
     </div>
-    <div class="stats-grid">
-      <div class="stat-card"><div class="num">15</div><div class="label">Courses</div></div>
-      <div class="stat-card"><div class="num">90h+</div><div class="label">Video Content</div></div>
-      <div class="stat-card"><div class="num">91</div><div class="label">Days</div></div>
-      <div class="stat-card"><div class="num">~1.5h</div><div class="label">Daily Goal</div></div>
-      <div class="stat-card"><div class="num">4</div><div class="label">Certifications</div></div>
+  </div>
+
+  <!-- DAILY PLANNER WITH SPACED REPETITION (MOVED TO TOP) -->
+  <div class="section" id="plannerSection">
+    <h2><span class="icon">📅</span> Daily Planner + Spaced Repetition</h2>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Your day-by-day planner with built-in spaced repetition. New topics are introduced, then reviewed at increasing intervals (Day 1 → Day 3 → Day 7 → Day 14 → Day 30). Check off tasks as you complete them — your progress saves automatically!</p>
+
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="flow-btn" onclick="setPlannerView('today')">📍 Today Only</button>
+      <button class="flow-btn" onclick="setPlannerView('week')">📆 This Week</button>
+      <button class="flow-btn" onclick="setPlannerView('all')">📋 All Days</button>
+      <button class="flow-btn" onclick="resetPlanner()" style="border-color:rgba(239,68,68,.3);color:#f87171">🔄 Reset Progress</button>
+    </div>
+
+    <div id="plannerStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px"></div>
+    <div id="planner"></div>
+  </div>
+
+  <!-- SPACED REPETITION EXPLAINER -->
+  <div class="section">
+    <h2><span class="icon">🧠</span> How Spaced Repetition Works</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px">
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">📅</div>
+        <strong style="color:var(--accent)">Day 1</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Learn new topic + first review</p>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">🔁</div>
+        <strong style="color:var(--accent)">Day 3</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">First spaced review (72h later)</p>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">🔄</div>
+        <strong style="color:var(--accent)">Day 7</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Second review (1 week later)</p>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">♻️</div>
+        <strong style="color:var(--accent)">Day 14</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Third review (2 weeks later)</p>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">💎</div>
+        <strong style="color:var(--accent)">Day 30</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Final review (mastered!)</p>
+      </div>
+    </div>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:.85rem;color:var(--muted)">
+      <strong style="color:var(--text)">Why it works:</strong> Spaced repetition forces your brain to recall information just as you're about to forget it. This strengthens neural pathways and moves knowledge from short-term to long-term memory. Studies show it improves retention by <strong style="color:var(--accent)">200-300%</strong> compared to cramming.
     </div>
   </div>
 
@@ -273,57 +345,6 @@
   <div class="section">
     <h2><span class="icon">🗓️</span> Weekly Study Schedule</h2>
     <div id="schedule"></div>
-  </div>
-
-  <!-- DAILY PLANNER WITH SPACED REPETITION -->
-  <div class="section">
-    <h2><span class="icon">📅</span> Daily Planner + Spaced Repetition</h2>
-    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Your day-by-day planner with built-in spaced repetition. New topics are introduced, then reviewed at increasing intervals (Day 1 → Day 3 → Day 7 → Day 14 → Day 30). Check off tasks as you complete them — your progress saves automatically!</p>
-
-    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-      <button class="flow-btn" onclick="setPlannerView('today')">📍 Today Only</button>
-      <button class="flow-btn" onclick="setPlannerView('week')">📆 This Week</button>
-      <button class="flow-btn" onclick="setPlannerView('all')">📋 All Days</button>
-      <button class="flow-btn" onclick="resetPlanner()" style="border-color:rgba(239,68,68,.3);color:#f87171">🔄 Reset Progress</button>
-    </div>
-
-    <div id="plannerStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px"></div>
-    <div id="planner"></div>
-  </div>
-
-  <!-- SPACED REPETITION EXPLAINER -->
-  <div class="section">
-    <h2><span class="icon">🧠</span> How Spaced Repetition Works</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px">
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:1.8rem;margin-bottom:6px">📅</div>
-        <strong style="color:var(--accent)">Day 1</strong>
-        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Learn new topic + first review</p>
-      </div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:1.8rem;margin-bottom:6px">🔁</div>
-        <strong style="color:var(--accent)">Day 3</strong>
-        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">First spaced review (72h later)</p>
-      </div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:1.8rem;margin-bottom:6px">🔄</div>
-        <strong style="color:var(--accent)">Day 7</strong>
-        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Second review (1 week later)</p>
-      </div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:1.8rem;margin-bottom:6px">♻️</div>
-        <strong style="color:var(--accent)">Day 14</strong>
-        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Third review (2 weeks later)</p>
-      </div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:1.8rem;margin-bottom:6px">💎</div>
-        <strong style="color:var(--accent)">Day 30</strong>
-        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Final review (mastered!)</p>
-      </div>
-    </div>
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:.85rem;color:var(--muted)">
-      <strong style="color:var(--text)">Why it works:</strong> Spaced repetition forces your brain to recall information just as you're about to forget it. This strengthens neural pathways and moves knowledge from short-term to long-term memory. Studies show it improves retention by <strong style="color:var(--accent)">200-300%</strong> compared to cramming.
-    </div>
   </div>
 
   <!-- DAILY GOALS -->
@@ -1271,6 +1292,7 @@ function togglePlannerTask(dayNum, taskText){
   else plannerProgress[key] = true;
   savePlannerProgress();
   renderPlanner();
+  updateNotification();
 }
 
 function setPlannerView(view){
@@ -1286,6 +1308,119 @@ function resetPlanner(){
   }
 }
 
+// ─── NOTIFICATION SYSTEM ────────────────────────────────
+function updateNotification(){
+  const today = getTodayDayNum();
+  const todayData = plannerData[today-1];
+  if(!todayData) return;
+  
+  const tasks = todayData.tasks;
+  const done = tasks.filter(t => plannerProgress[`${today}-${t.text}`]).length;
+  const remaining = tasks.length - done;
+  const newTasks = tasks.filter(t => t.tag === 'new' && !plannerProgress[`${today}-${t.text}`]);
+  const reviewTasks = tasks.filter(t => t.tag === 'review' && !plannerProgress[`${today}-${t.text}`]);
+  
+  const banner = document.getElementById('notifBanner');
+  const icon = document.getElementById('notifIcon');
+  const title = document.getElementById('notifTitle');
+  const msg = document.getElementById('notifMsg');
+  const taskEl = document.getElementById('notifTask');
+  
+  if(remaining === 0){
+    icon.textContent = '🎉';
+    title.textContent = 'All Done for Today! Great Job!';
+    msg.textContent = `You completed all ${tasks.length} tasks for Day ${today}. ${todayData.dateStr}. Come back tomorrow for more!`;
+    taskEl.innerHTML = '🔥 Streak: ' + getStreak() + ' days. Keep it up!';
+  } else if(done > 0){
+    icon.textContent = '💪';
+    title.textContent = `Keep Going! ${remaining} task${remaining>1?'s':''} left today`;
+    msg.textContent = `Day ${today} — ${todayData.dateStr}. You're making progress! ${done}/${tasks.length} done.`;
+    const nextTask = newTasks[0] || reviewTasks[0] || tasks.find(t => !plannerProgress[`${today}-${t.text}`]);
+    taskEl.innerHTML = nextTask ? `Next: <strong>${nextTask.text}</strong>` : '';
+  } else {
+    icon.textContent = '🚀';
+    title.textContent = `Time to Start! Day ${today} — ${todayData.dateStr}`;
+    msg.textContent = `You have ${tasks.length} task${tasks.length>1?'s':''} today${newTasks.length>0?`, including ${newTasks.length} new topic${newTasks.length>1?'s':''}`:''}${reviewTasks.length>0?`, ${reviewTasks.length} review${reviewTasks.length>1?'s':''}`:''}.`;
+    const firstTask = newTasks[0] || tasks[0];
+    taskEl.innerHTML = firstTask ? `Start with: <strong>${firstTask.text}</strong>` : '';
+  }
+}
+
+function getStreak(){
+  const today = getTodayDayNum();
+  let streak = 0;
+  for(let d = today; d >= 1; d--){
+    const dayTasks = plannerData[d-1]?.tasks || [];
+    const dayDone = dayTasks.filter(t => plannerProgress[`${d}-${t.text}`]).length;
+    if(dayDone > 0) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function dismissNotif(){
+  document.getElementById('notifBanner').style.display = 'none';
+  sessionStorage.setItem('kw_notif_dismissed', 'true');
+}
+
+function showNotif(){
+  if(!sessionStorage.getItem('kw_notif_dismissed')){
+    document.getElementById('notifBanner').style.display = 'block';
+  }
+}
+
+function scrollToPlanner(){
+  document.getElementById('plannerSection').scrollIntoView({behavior:'smooth'});
+  setPlannerView('today');
+}
+
+function enableNotifications(){
+  if('Notification' in window){
+    Notification.requestPermission().then(permission => {
+      if(permission === 'granted'){
+        new Notification('📚 Kevin Wallace Study Plan', {
+          body: 'Daily reminders enabled! You will be notified to study each day.',
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📚</text></svg>'
+        });
+        localStorage.setItem('kw_notifications_enabled', 'true');
+        scheduleDailyNotification();
+      } else {
+        alert('Notifications were blocked. You can enable them in your browser settings.');
+      }
+    });
+  } else {
+    alert('Your browser does not support notifications.');
+  }
+}
+
+function scheduleDailyNotification(){
+  // Check if already scheduled
+  if(localStorage.getItem('kw_notif_scheduled')) return;
+  localStorage.setItem('kw_notif_scheduled', 'true');
+  
+  // Send a notification every hour checking if tasks remain
+  setInterval(() => {
+    if(Notification.permission === 'granted' && !sessionStorage.getItem('kw_notif_dismissed')){
+      const today = getTodayDayNum();
+      const todayData = plannerData[today-1];
+      if(!todayData) return;
+      const tasks = todayData.tasks;
+      const done = tasks.filter(t => plannerProgress[`${today}-${t.text}`]).length;
+      const remaining = tasks.length - done;
+      
+      if(remaining > 0 && !sessionStorage.getItem('kw_hourly_notif')){
+        new Notification('📚 Time to Study!', {
+          body: `Day ${today}: ${remaining} task${remaining>1?'s':''} remaining. Keep your streak alive! 🔥`,
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📚</text></svg>'
+        });
+        sessionStorage.setItem('kw_hourly_notif', 'true');
+        // Reset after 2 hours
+        setTimeout(() => sessionStorage.removeItem('kw_hourly_notif'), 7200000);
+      }
+    }
+  }, 3600000); // Check every hour
+}
+
 // ─── INIT ───────────────────────────────────────────────
 renderTable();
 renderRationale();
@@ -1297,6 +1432,11 @@ renderTips();
 renderFlowcharts();
 loadPlannerProgress();
 renderPlanner();
+updateNotification();
+showNotif();
+if(localStorage.getItem('kw_notifications_enabled') === 'true'){
+  scheduleDailyNotification();
+}
 </script>
 </body>
 </html>
