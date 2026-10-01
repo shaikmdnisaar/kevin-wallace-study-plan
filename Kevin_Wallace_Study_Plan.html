@@ -153,6 +153,29 @@
   .pstat-card .pnum{font-size:1.5rem;font-weight:800;color:var(--accent)}
   .pstat-card .plabel{font-size:.72rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
 
+  /* Technical Drama */
+  .drama-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden}
+  .drama-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none}
+  .drama-header:hover{background:rgba(79,156,255,.05)}
+  .drama-header .dtitle{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:10px}
+  .drama-header .dmeta{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .drama-body{padding:18px;border-top:1px solid var(--border);display:none}
+  .drama-card.open .drama-body{display:block}
+  .drama-card.open .darrow{transform:rotate(90deg)}
+  .darrow{font-size:1rem;transition:transform .3s;color:var(--muted)}
+  .drama-scene{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
+  .drama-scene h4{font-size:.95rem;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .drama-char{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;padding:10px 14px;background:var(--card2);border-radius:8px;border-left:3px solid var(--accent)}
+  .drama-char .emoji{font-size:1.8rem;flex-shrink:0}
+  .drama-char .info{flex:1}
+  .drama-char .name{font-weight:700;color:var(--text);font-size:.88rem}
+  .drama-char .role{font-size:.72rem;color:var(--accent);font-weight:600;margin-left:6px}
+  .drama-char .desc{font-size:.82rem;color:var(--muted);margin-top:4px;line-height:1.5}
+  .drama-story{font-size:.85rem;color:var(--text);line-height:1.6;padding:12px 16px;background:var(--card2);border-radius:8px;border-left:3px solid var(--accent2);margin-bottom:10px;font-style:italic}
+  .drama-anim{font-size:.82rem;color:var(--muted);padding:12px 16px;background:rgba(79,156,255,.05);border-radius:8px;border:1px solid rgba(79,156,255,.15)}
+  .drama-anim strong{color:var(--accent)}
+  .drama-priority{font-size:.68rem;padding:2px 8px;border-radius:6px;font-weight:600;flex-shrink:0}
+
   /* Path diagram */
   .path-diagram{text-align:center;padding:10px 0}
   .path-node{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 24px;margin:6px;font-size:.85rem}
@@ -412,6 +435,21 @@
       <button class="flow-btn" onclick="toggleAllFlows(false)">Collapse All</button>
     </div>
     <div id="flowcharts"></div>
+  </div>
+
+  <!-- TECHNICAL DRAMA: REAL-WORLD ANIMATION CONCEPTS -->
+  <div class="section">
+    <h2><span class="icon">🎭</span> Technical Drama: Real-World Animation Concepts</h2>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Each networking topic reimagined as a real-world drama with characters, storylines, and visual metaphors you can animate in Google Flow. Click any topic to see the cast, storyline, and animation concept.</p>
+
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="flow-btn" onclick="filterDrama('all')" style="border-color:var(--accent);color:var(--accent)">All Topics</button>
+      <button class="flow-btn" onclick="filterDrama('critical')">🔴 Critical</button>
+      <button class="flow-btn" onclick="filterDrama('high')">🟡 High</button>
+      <button class="flow-btn" onclick="filterDrama('medium')">🟢 Medium</button>
+    </div>
+
+    <div id="dramaContainer"></div>
   </div>
 
   <div style="text-align:center;color:var(--muted);font-size:.8rem;padding:20px 0 40px">
@@ -1536,6 +1574,230 @@ function scheduleDailyNotification(){
   }, 3600000); // Check every hour
 }
 
+// ─── TECHNICAL DRAMA CONCEPTS ───────────────────────────
+// Each topic reimagined as a real-world drama with characters for Google Flow animation
+const dramaConcepts = [
+  {
+    topic:"OSI Model", priority:"critical", course:"CCNA / Networking Basics",
+    emoji:"🏗️", title:"The 7-Story Building",
+    characters:[
+      {emoji:"🧱",name:"Physical Pete",role:"Layer 1 — Janitor",desc:"Carries raw bits through cables. He's the foundation — without him, nothing moves. He works with copper, fiber, and electricity."},
+      {emoji:"📦",name:"Data Link Dana",role:"Layer 2 — Mailroom Manager",desc:"Labels packages with MAC addresses and delivers them within the same floor (LAN). She uses switches as her delivery team."},
+      {emoji:"🛣️",name:"Network Ray",role:"Layer 3 — GPS Navigator",desc:"Plans the route across the city (internet). He uses IP addresses and routers to find the best path for every package."},
+      {emoji:"🚚",name:"Transport Tom",role:"Layer 4 — Fleet Manager",desc:"Chooses reliable trucks (TCP) or fast motorcycles (UDP). He ensures packages arrive intact or as fast as possible."},
+      {emoji:"🤝",name:"Session Sam",role:"Layer 5 — Meeting Coordinator",desc:"Opens, manages, and closes conversations between devices. He's the handshake guy — 'Hi, I'm Sam, let's talk!'"},
+      {emoji:"📄",name:"Presentation Pam",role:"Layer 6 — Translator",desc:"Translates data between formats — encryption, compression, encoding. She makes sure everyone speaks the same language."},
+      {emoji:"👩‍💼",name:"Application Amy",role:"Layer 7 — CEO",desc:"The user-facing boss. She runs HTTP, email, DNS — the apps people actually see and use. She gives the orders."},
+    ],
+    storyline:"A package needs to travel from the CEO (Application Amy) down through 7 floors of a building, each floor run by a different character. Physical Pete carries it out the door, Data Link Dana labels it, Network Ray plans the route, Transport Tom picks the vehicle, and so on up to the recipient's CEO. Each character does their job and passes it to the next.",
+    animation:"Show a 7-story building. A package drops from the top floor (Layer 7) down through each floor. Each character does their transformation (label, route, encrypt) and passes it down. At the bottom, it exits the building and travels to another building, going UP through their 7 floors. Use color-coded floors and character animations."
+  },
+  {
+    topic:"Subnetting", priority:"critical", course:"CCNA / Learning Subnetting",
+    emoji:"🥷", title:"The Pizza Slice Ninja",
+    characters:[
+      {emoji:"🍕",name:"Pizza Chef Pietro",role:"The Network Owner",desc:"Has one giant pizza (192.168.1.0/24) but needs to feed 5 different departments. He calls the Subnet Ninja."},
+      {emoji:"🥷",name:"Subnet Ninja",role:"The Slicer",desc:"Calculates exactly how many slices each department needs. Uses the 'power of 2' blade technique. /26 = 4 slices, /27 = 8 slices. Precise, deadly, no waste."},
+      {emoji:"👨‍💼",name:"Manager Mike",role:"Department Head",desc:"Needs 60 IPs for his team. The Ninja gives him a /26 slice (64 addresses). Mike is happy — he has exactly enough."},
+      {emoji:"👩‍💻",name:"Dev Dana",role:"IT Lead",desc:"Needs 30 IPs. The Ninja gives her a /27 slice (32 addresses). Dana gets her own subnet — no overlap with Mike's team."},
+    ],
+    storyline:"Pizza Chef Pietro has one giant pizza (a /24 network) but 5 departments need different amounts. The Subnet Ninja arrives with his 'Power of 2' blade and slices the pizza precisely: /26 for the big team (64 slices), /27 for the medium team (32 slices), /28 for the small team (16 slices). Each department gets exactly what they need — no waste, no overlap.",
+    animation:"Show a giant pizza (the /24 network). The Ninja appears with a katana blade labeled 'subnet mask'. He calculates (2^n), then slices the pizza into precise pieces. Each slice is labeled with its subnet address and usable range. Color-code each department's slice differently. Show the binary math floating above as he calculates."
+  },
+  {
+    topic:"VLANs & Trunking", priority:"critical", course:"CCNA / Switching & Routing",
+    emoji:"🏢", title:"The Office Building with Invisible Walls",
+    characters:[
+      {emoji:"🏢",name:"Building Manager Bea",role:"Switch Administrator",desc:"Runs a 5-floor office building. Without VLANs, everyone hears every announcement (broadcasts). She needs to separate departments."},
+      {emoji:"🚪",name:"VLAN Valerie",role:"Interior Designer",desc:"Builds invisible walls between floors. Sales (VLAN 10) can't hear Engineering (VLAN 20). Each floor is its own broadcast domain."},
+      {emoji:"🛤️",name:"Trunk Tom",role:"Elevator Operator",desc:"Carries traffic between switches on a single cable (trunk). He tags each passenger with a VLAN badge (802.1Q) so they go to the right floor."},
+      {emoji:"🚪",name:"Access Port Annie",role:"Door Guard",desc:"Stands at each office door. She only lets one VLAN through — if you're VLAN 10, you enter the Sales floor. No mixing."},
+    ],
+    storyline:"Building Manager Bea has a noisy office — every broadcast reaches everyone. VLAN Valerie arrives and builds invisible walls: Sales on floor 10, Engineering on floor 20, HR on floor 30. Now broadcasts stay within each floor. But when employees need to travel between buildings, Trunk Tom tags them with VLAN badges (802.1Q) so they arrive at the correct floor in the other building.",
+    animation:"Show an office building with floors lighting up in different colors (VLAN 10=blue, 20=green, 30=orange). Broadcasts (ripples) only spread within their floor. Then show an elevator (trunk) carrying tagged passengers between buildings. Each passenger gets a colored badge as they enter the elevator."
+  },
+  {
+    topic:"Spanning Tree Protocol (STP)", priority:"critical", course:"CCNA / Switching & Routing",
+    emoji:"🌳", title:"The Bridge Inspector",
+    characters:[
+      {emoji:"🌳",name:"Root Bridge Regina",role:"The Elected Leader",desc:"The most important bridge in the network. All other bridges measure their distance from her. She's elected by lowest Bridge ID."},
+      {emoji:"🔍",name:"STP Inspector Steve",role:"Loop Preventer",desc:"Walks every path in the network looking for loops. When he finds a redundant path, he blocks it (port goes to 'blocking' state) to prevent endless traffic circles."},
+      {emoji:"🚦",name:"Port Patrol Paula",role:"Traffic Light Operator",desc:"Controls each port's state: Blocking (red) → Listening (yellow) → Learning (orange) → Forwarding (green). She transitions ports through these states over 50 seconds."},
+      {emoji:"💥",name:"Broadcast Storm Boris",role:"The Villain",desc:"Creates endless traffic loops that crash the network. He's the enemy STP fights. Without STP, Boris wins and the network drowns in duplicate frames."},
+    ],
+    storyline:"A network has redundant switches for backup, but this creates loops. Broadcast Storm Boris sends frames that circle endlessly, crashing everything. STP Inspector Steve arrives, elects Root Bridge Regina as the leader, then methodically blocks redundant ports. Port Patrol Paula transitions each port through traffic light states (blocking→listening→learning→forwarding). Boris is defeated — the network is loop-free but still has backup paths ready.",
+    animation:"Show a network of switches connected in a ring. Red broadcast frames start circling endlessly (Boris). Then Steve appears, Regina is crowned as Root Bridge (crown animation). Steve walks each link and places red X marks on redundant ports. The ring breaks into a tree. Ports transition through colored states (red→yellow→orange→green). Boris's storm stops."
+  },
+  {
+    topic:"OSPF Routing", priority:"critical", course:"CCNA / ENCOR",
+    emoji:"🗺️", title:"The Map Makers' Guild",
+    characters:[
+      {emoji:"🗺️",name:"Mapmaker Olivia",role:"Link-State Advertiser",desc:"Doesn't just know her neighbors — she knows the ENTIRE network map. She sends LSAs (Link State Advertisements) to every other router, sharing her piece of the map."},
+      {emoji:"🤝",name:"Neighbor Nick",role:"Adjacency Builder",desc:"Before sharing maps, routers must become friends. Nick performs the OSPF handshake: Hello → Database Description → Link State Request → Link State Update → Link State Ack."},
+      {emoji:"👑",name:"DR Derek",role:"Designated Router",desc:"Elected as the spokesperson for the network. On multi-access networks, everyone sends their LSAs to Derek, who distributes them. This prevents chaos."},
+      {emoji:"🧮",name:"SPF Calculator Sam",role:"Shortest Path Finder",desc:"Takes all the map pieces and runs the Dijkstra algorithm. He calculates the shortest path to every destination. His calculations become the routing table.",
+      },
+    ],
+    storyline:"In the land of OSPF, every router is a mapmaker. Neighbor Nick introduces routers to each other (Hello packets). They become friends (adjacencies) and exchange map pieces (LSAs). But on busy streets (multi-access networks), everyone talking at once is chaos — so they elect DR Derek as spokesperson. Once everyone has all map pieces, SPF Calculator Sam runs Dijkstra's algorithm to find the shortest path to every city. The routing table is born.",
+    animation:"Show routers as characters on a map. They exchange handshake animations (Hello packets). Then they throw map pieces (LSAs) to each other. On a busy intersection, they vote for Derek (crown appears). Finally, Sam runs calculations (numbers floating), and green shortest-path lines appear on the map connecting all routers."
+  },
+  {
+    topic:"NAT (Network Address Translation)", priority:"critical", course:"CCNA / Networking Basics",
+    emoji:"🔄", title:"The Post Office Translator",
+    characters:[
+      {emoji:"🏠",name:"Private Pete",role:"Internal User",desc:"Lives inside the company with a private IP (192.168.1.10). He can't send mail to the internet directly — his address isn't recognized outside."},
+      {emoji:"📮",name:"NAT Nat",role:"Post Office Manager",desc:"Receives Pete's letter, replaces his private return address with a public one (203.0.113.5), and sends it out. When the reply comes back, she translates it back to Pete's private address."},
+      {emoji:"📬",name:"PAT Pat",role:"Port Number Sorter",desc:"When Nat runs out of public addresses, Pat adds port numbers. 203.0.113.5:5001 → Pete, :5002 → Dana. One public IP serves hundreds of users through port multiplexing."},
+      {emoji:"🌍",name:"Internet Ivan",role:"The Outside World",desc:"Only sees the public IP. He has no idea Pete exists behind NAT. He sends replies to the public address, and Nat sorts them back."},
+    ],
+    storyline:"Private Pete wants to send a letter to the internet, but his private address (192.168.x.x) isn't valid outside. NAT Nat intercepts his letter at the post office, swaps his private address for a public one, and sends it out. When the reply comes back, she swaps it back to Pete's address. When she runs out of public addresses, PAT Pat adds port numbers so one public IP serves everyone.",
+    animation:"Show Pete sending a letter with '192.168.1.10' as return address. The letter arrives at a post office (NAT router). Nat crosses out the address and writes '203.0.113.5'. The letter goes to the internet. The reply comes back to '203.0.113.5', Nat translates it back to Pete's address. Show a table of translations updating in real-time."
+  },
+  {
+    topic:"ACLs (Access Control Lists)", priority:"critical", course:"CCNA / Network Security",
+    emoji:"🛡️", title:"The Bouncer at the Network Door",
+    characters:[
+      {emoji:"🛡️",name:"ACL Anna",role:"Head Bouncer",desc:"Stands at the router's door with a clipboard. She checks every packet against her list: permit or deny. No packet enters without her approval."},
+      {emoji:"📋",name:"Standard Stan",role:"Simple Checker",desc:"Only checks the source IP. 'Are you from 192.168.1.0/24? Come in. Everyone else, denied.' Fast but not very smart."},
+      {emoji:"🔍",name:"Extended Erica",role:"Thorough Inspector",desc:"Checks source, destination, port, protocol, and time of day. 'You're TCP from 10.0.0.5 going to port 443? Permitted. UDP to port 23? Denied.' Very thorough."},
+      {emoji:"🚫",name:"Deny Dan",role:"The Rejection",desc:"The implicit deny at the bottom of every ACL. If no rule matches, Dan drops the packet. He's the silent guardian — 'if in doubt, block it.'"},
+    ],
+    storyline:"The network door is protected by ACL Anna, the head bouncer. She has a clipboard with rules from top to bottom. Standard Stan only checks IDs (source IP). Extended Erica checks everything — source, destination, port, protocol. Every packet is checked against each rule in order. If no rule matches, Deny Dan silently drops it. The order of rules matters — first match wins!",
+    animation:"Show a nightclub door (router interface). Packets approach as people. Anna checks each against her clipboard (ACL rules). Permitted packets walk in (green checkmark). Denied packets bounce off (red X). Show the rules list on the clipboard, highlighting as each is checked. End with Dan's 'implicit deny' catching anything that slips through."
+  },
+  {
+    topic:"DHCP (Dynamic Host Configuration Protocol)", priority:"high", course:"CCNA / Network Services",
+    emoji:"🏨", title:"The Hotel Check-In",
+    characters:[
+      {emoji:"📢",name:"Client Carl",role:"New Guest",desc:"Just arrived with no IP address. He shouts 'DISCOVER' to find a DHCP server. He's desperate — no address means no network access."},
+      {emoji:"🏨",name:"DHCP Derek",role:"Hotel Manager",desc:"Hears Carl's shout and responds with 'OFFER' — 'I have room 192.168.1.50 for you!' He checks his pool of available addresses."},
+      {emoji:"🙋",name:"Client Carl",role:"Eager Guest",desc:"Receives the offer and shouts 'REQUEST' — 'I'll take room 192.168.1.50!' He's claiming the address."},
+      {emoji:"✅",name:"DHCP Derek",role:"Hotel Manager",desc:"Responds with 'ACK' — 'Confirmed! Room 192.168.1.50 is yours for 8 days (lease time). Here's your gateway, DNS, and subnet mask.'"},
+    ],
+    storyline:"Client Carl arrives at the network hotel with no IP address. He shouts DISCOVER. DHCP Derek, the hotel manager, hears him and OFFERs a room (IP address). Carl REQUESTs that specific room. Derek confirms with an ACK and hands over the keys — IP address, subnet mask, gateway, DNS, and lease time. The DORA dance is complete: Discover, Offer, Request, Acknowledge.",
+    animation:"Show a hotel lobby. Carl enters shouting 'DISCOVER!' (ripple effect). Derek behind the desk responds with 'OFFER' and a room key. Carl grabs it and shouts 'REQUEST!'. Derek stamps 'ACKNOWLEDGED' and hands over a welcome packet (IP, mask, gateway, DNS). Show the DORA letters appearing in sequence."
+  },
+  {
+    topic:"BGP (Border Gateway Protocol)", priority:"high", course:"CCNP ENCOR",
+    emoji:"🌍", title:"The Diplomats of the Internet",
+    characters:[
+      {emoji:"🤵",name:"BGP Barbara",role:"Chief Diplomat",desc:"Doesn't care about the fastest path — she cares about POLICY. She negotiates with other autonomous systems (AS) to exchange routes. She's the reason the internet works."},
+      {emoji:"🏛️",name:"AS-100 Aldo",role:"Country Representative",desc:"Represents Autonomous System 100. He tells Barbara about his networks. Barbara decides whether to accept or reject based on policy."},
+      {emoji:"🏛️",name:"AS-200 Zara",role:"Country Representative",desc:"Represents AS 200. She competes with Aldo for Barbara's traffic. Barbara chooses the best path based on AS_PATH length, local preference, and other attributes."},
+      {emoji:"📊",name:"Path Attributes Pam",role:"Decision Maker",desc:"Barbara's advisor. She evaluates: Local Preference (highest wins), AS_PATH (shortest wins), Origin (IGP>EGP>incomplete), MED (lowest wins). She picks the best path."},
+    ],
+    storyline:"The internet isn't connected by cables — it's connected by BGP diplomats. BGP Barbara sits at the border of her autonomous system (AS). She negotiates with AS-100 Aldo and AS-200 Zara. They exchange route advertisements — 'I can reach 10.0.0.0/8 through my AS.' Barbara's advisor, Path Attributes Pam, evaluates each path: shortest AS_PATH, highest local preference, best origin. Barbara picks the best path and installs it in her routing table.",
+    animation:"Show the world map with AS bubbles connected by lines. Diplomats exchange route advertisements (scrolling text). Pam evaluates paths with a scoreboard (Local Pref, AS_PATH length, Origin). The winning path lights up green. Show how Barbara can change policies to prefer different paths."
+  },
+  {
+    topic:"IP Addressing (IPv4 vs IPv6)", priority:"critical", course:"CCNA / Learning IP Addressing",
+    emoji:"🔢", title:"The Two Languages",
+    characters:[
+      {emoji:"📞",name:"IPv4 Ian",role:"Old Phone System",desc:"Uses 32-bit addresses (192.168.1.1). He's been around since the 1980s. He has 4.3 billion addresses — but they're running out! He's exhausted."},
+      {emoji:"📱",name:"IPv6 Iris",role:"New Phone System",desc:"Uses 128-bit addresses (2001:db8::1). She has 340 undecillion addresses — enough for every grain of sand on Earth. She's the future."},
+      {emoji:"🔄",name:"Dual-Stack Daisy",role:"Translator",desc:"Speaks both IPv4 and IPv6 simultaneously. She bridges the old and new worlds during the transition period."},
+      {emoji:"🕳️",name:"NAT64 Nora",role:"Tunnel Builder",desc:"Builds tunnels between IPv4 and IPv6 networks. She translates so IPv6-only devices can talk to IPv4-only servers."},
+    ],
+    storyline:"IPv4 Ian has been running the phone system since the 80s, but he's running out of phone numbers (4.3 billion isn't enough anymore). IPv6 Iris arrives with an infinite supply (340 undecillion addresses). But the world isn't ready to switch completely — so Dual-Stack Daisy speaks both languages, and NAT64 Nora builds tunnels between the old and new worlds. The transition is happening NOW.",
+    animation:"Show Ian with a small phone book (32 bits, running out of pages). Iris arrives with an enormous phone book (128 bits, infinite pages). Show the address formats side by side: 192.168.1.1 vs 2001:0db8:0000:0000:0000:0000:0000:0001. Daisy stands between them translating. Nora builds a tunnel animation between IPv4 and IPv6 worlds."
+  },
+  {
+    topic:"VPN & IPsec", priority:"high", course:"CCNP ENARSI / CCNA Cybersecurity",
+    emoji:"🚇", title:"The Secret Tunnel",
+    characters:[
+      {emoji:"🕵️",name:"Sender Sam",role:"Secret Agent",desc:"Needs to send classified data across the public internet. He can't send it in the open — enemies are watching. He needs a secure tunnel."},
+      {emoji:"🚇",name:"IPsec Iris",role:"Tunnel Builder",desc:"Builds an encrypted tunnel through the internet. She wraps Sam's data in encryption (ESP), authenticates it (AH), and sends it safely. Enemies see only gibberish."},
+      {emoji:"🔑",name:"IKE Igor",role:"Key Exchange Agent",desc:"Performs the secret handshake. He exchanges keys using Diffie-Hellman — even if enemies watch the key exchange, they can't figure out the actual key. Math magic!"},
+      {emoji:"👹",name:"Hacker Hank",role:"The Eavesdropper",desc:"Tries to intercept Sam's data in the tunnel. But all he sees is encrypted gibberish. He's frustrated — the math is too strong."},
+    ],
+    storyline:"Sender Sam needs to send classified data across the internet, but Hacker Hank is eavesdropping. IPsec Iris builds a secret encrypted tunnel. IKE Igor performs the key exchange using Diffie-Hellman mathematics — Hank watches but can't figure out the key. Sam's data is wrapped in encryption (ESP) and sent through the tunnel. Hank intercepts it but only sees gibberish. The data arrives safely at the destination.",
+    animation:"Show Sam on one side of the internet, destination on the other. Hank lurks in the middle. Iris builds a glowing tunnel (encryption). Igor exchanges keys with math symbols floating (Diffie-Hellman). Sam's data enters the tunnel as readable text, gets encrypted (scrambled), travels through, and exits decrypted at the destination. Hank catches a packet but it's gibberish."
+  },
+  {
+    topic:"Firewall & Security", priority:"high", course:"CCNA Cybersecurity / CCST Cybersecurity",
+    emoji:"🏰", title:"The Castle Defense",
+    characters:[
+      {emoji:"🏰",name:"Firewall Fiona",role:"Castle Gatekeeper",desc:"Stands between the trusted internal network (inside the castle) and the untrusted internet (outside the moat). She inspects every packet crossing the boundary."},
+      {emoji:"📋",name:"Stateful Simon",role:"State Tracker",desc:"Remembers every connection's state. 'You started this conversation? Then replies are allowed.' He tracks the state table — much smarter than simple packet filtering."},
+      {emoji:"🔍",name:"IDS Iris",role:"Intrusion Detection",desc:"Watches traffic patterns and alerts on suspicious behavior. She's the lookout on the tower — 'I see port scans! I see malware signatures!'"},
+      {emoji:"⚔️",name:"IPS Ivan",role:"Intrusion Prevention",desc:"Goes further than Iris — he doesn't just alert, he BLOCKS. He drops malicious packets in real-time. Active defense, not passive observation."},
+    ],
+    storyline:"The network is a castle. Firewall Fiona guards the gate, inspecting every packet. Stateful Simon keeps a ledger of all conversations — only expected replies get through. IDS Iris watches from the tower for suspicious patterns. When she spots an attack, IPS Ivan doesn't just watch — he blocks it instantly. Together, they form a layered defense: inspect, track, detect, prevent.",
+    animation:"Show a castle with a moat (firewall boundary). Packets approach as travelers. Fiona inspects passports (ACLs). Simon checks his ledger (state table). From the tower, Iris spots suspicious travelers (red glow). Ivan drops a port-scanning packet into the moat (splash!). Show the layered defense: outer wall (firewall), inner wall (stateful), tower (IDS/IPS)."
+  },
+  {
+    topic:"Network Automation & Python", priority:"medium", course:"DevNet Associate",
+    emoji:"🤖", title:"The Robot Workforce",
+    characters:[
+      {emoji:"🤖",name:"Python Pete",role:"Automation Engineer",desc:"Writes scripts that configure 100 switches at once. He's replaced the manual CLI operator — 'Why configure one at a time when I can do all 100 with one script?'"},
+      {emoji:"🔌",name:"NETCONF Nora",role:"Protocol Specialist",desc:"Speaks NETCONF — a standardized protocol for configuring network devices. She uses XML and YANG models to configure devices programmatically."},
+      {emoji:"🌐",name:"REST API Rachel",role:"Web Communicator",desc:"Uses HTTP (GET, POST, PUT, DELETE) to talk to network devices. She sends JSON data and gets JSON responses. Simple, universal, modern."},
+      {emoji:"📝",name:"Ansible Alex",role:"Playbook Writer",desc:"Writes YAML playbooks that describe the desired state of the network. He doesn't write commands — he writes INTENT. The system figures out how to achieve it."},
+    ],
+    storyline:"The old way: 100 switches, 100 manual CLI sessions, 100 chances for human error. The new way: Python Pete writes one script. NETCONF Nora sends standardized configurations. REST API Rachel communicates via HTTP. Ansible Alex writes a playbook describing the desired state — the system makes it happen. What took 8 hours now takes 8 seconds. The robots have arrived.",
+    animation:"Show a human operator manually configuring switches one by one (slow, tedious, errors). Then Python Pete arrives with a script. He runs it once — all 100 switches configure simultaneously (green checkmarks appear everywhere). Show the code on screen, then the network transforming. Compare: old way (8 hours, errors) vs new way (8 seconds, perfect)."
+  },
+  {
+    topic:"Wireless Networks (Wi-Fi)", priority:"medium", course:"Wireless Networking / CCNA",
+    emoji:"📡", title:"The Invisible Radio Station",
+    characters:[
+      {emoji:"📻",name:"Frequency Fiona",role:"Radio DJ",desc:"Broadcasts on 2.4GHz or 5GHz frequencies. She has to share the airwaves with everyone — no wires, no exclusive lanes. It's a shared medium."},
+      {emoji:"📶",name:"SSID Sam",role:"Station Name",desc:"The network name everyone sees: 'CoffeeShop_WiFi'. He's the public face — but he doesn't reveal the security underneath."},
+      {emoji:"🔐",name:"WPA3 Wendy",role:"Security Guard",desc:"Encrypts every wireless conversation. WEP was her weak predecessor (cracked in minutes). WPA2 was better. WPA3 is the current champion — she uses SAE for bulletproof key exchange."},
+      {emoji:"🏢",name:"WLC Will",role:"Wireless Controller",desc:"Commands all access points from a central controller. He's the general — APs are his soldiers. He coordinates channels, power, and roaming. CAPWAP is his communication protocol."},
+    ],
+    storyline:"Frequency Fiona broadcasts data through thin air — no cables! But the air is shared, so she must coordinate with others. SSID Sam announces the network name to the world. WPA3 Wendy encrypts everything so eavesdroppers only hear gibberish. WLC Will commands an army of access points from headquarters, coordinating channels and power levels to avoid interference. When you walk from one AP to another, Will hands off your connection seamlessly — you never notice.",
+    animation:"Show radio waves emanating from an AP (concentric circles). Fiona broadcasts on different frequencies (color-coded: 2.4GHz=blue, 5GHz=red). Sam's name appears as a floating banner. Wendy wraps each transmission in a lock animation (encryption). Will sits in a control room monitoring multiple APs on a map, adjusting channels to avoid overlap (interference shown as red zones)."
+  },
+];
+
+let dramaFilter = 'all';
+
+function renderDrama(){
+  const container = document.getElementById('dramaContainer');
+  const filtered = dramaFilter === 'all' ? dramaConcepts : dramaConcepts.filter(d => d.priority === dramaFilter);
+  container.innerHTML = filtered.map((d, i) => `
+    <div class="drama-card" id="drama-${i}">
+      <div class="drama-header" onclick="toggleDrama(${i})">
+        <div class="dtitle">
+          <span style="font-size:1.6rem">${d.emoji}</span>
+          ${d.title}
+          <span class="drama-priority pill pill-${d.priority}">${d.priority === 'critical' ? '🔴 Critical' : d.priority === 'high' ? '🟡 High' : '🟢 Medium'}</span>
+        </div>
+        <div class="dmeta">
+          <span>${d.topic}</span>
+          <span>·</span>
+          <span>${d.characters.length} characters</span>
+          <span class="darrow">▶</span>
+        </div>
+      </div>
+      <div class="drama-body">
+        <div class="drama-story">📖 <strong>Storyline:</strong> ${d.storyline}</div>
+        <h4 style="font-size:.95rem;color:var(--accent);margin-bottom:10px">🎭 Cast of Characters</h4>
+        ${d.characters.map(c => `
+          <div class="drama-char">
+            <div class="emoji">${c.emoji}</div>
+            <div class="info">
+              <div><span class="name">${c.name}</span><span class="role">${c.role}</span></div>
+              <div class="desc">${c.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+        <div class="drama-anim">🎬 <strong>Google Flow Animation Concept:</strong> ${d.animation}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleDrama(i){
+  document.getElementById('drama-'+i)?.classList.toggle('open');
+}
+
+function filterDrama(filter){
+  dramaFilter = filter;
+  renderDrama();
+}
+
 // ─── INIT ───────────────────────────────────────────────
 renderTable();
 renderRationale();
@@ -1545,6 +1807,7 @@ renderChecklist();
 renderTracker();
 renderTips();
 renderFlowcharts();
+renderDrama();
 loadPlannerProgress();
 document.getElementById('deadlineInput').value = plannerDeadline.toISOString().split('T')[0];
 onDeadlineChange(true);
