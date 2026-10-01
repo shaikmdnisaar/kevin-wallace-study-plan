@@ -195,7 +195,7 @@
       <span class="badge">👨‍🏫 <strong>CCIEx2 Lifetime Emeritus #7945</strong></span>
       <span class="badge">📅 <strong>Oct 1 → Dec 31, 2026</strong></span>
       <span class="badge">🎥 <strong>80h 41m</strong> of content</span>
-      <span class="badge">🎯 <strong>14 courses</strong></span>
+      <span class="badge">🎯 <strong>15 courses</strong></span>
       <span class="badge">⏱️ <strong>~1.5 hrs/day</strong></span>
     </div>
   </div>
@@ -208,7 +208,7 @@
       <div class="overall-bar-wrap"><div class="overall-bar" id="overallBar"></div></div>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="num">14</div><div class="label">Courses</div></div>
+      <div class="stat-card"><div class="num">15</div><div class="label">Courses</div></div>
       <div class="stat-card"><div class="num">90h+</div><div class="label">Video Content</div></div>
       <div class="stat-card"><div class="num">91</div><div class="label">Days</div></div>
       <div class="stat-card"><div class="num">~1.5h</div><div class="label">Daily Goal</div></div>
@@ -404,6 +404,7 @@ const courses = [
   {n:12, title:"Wireless Networking Essential Training", dur:"1h 19m", level:"Intermediate", rating:4.7, reviews:"1,450", imp:5, priority:"medium", url:"https://www.linkedin.com/learning/wireless-networking-essential-training"},
   {n:13, title:"CCNA Cybersecurity (200-201) v1.2 Cert Prep", dur:"5h 52m", level:"Intermediate", rating:4.5, reviews:"21", imp:8, priority:"high", url:"https://www.linkedin.com/learning/ccna-cybersecurity-200-201-v1-2-cert-prep"},
   {n:14, title:"Learning IP Addressing", dur:"40m", level:"Beginner", rating:4.8, reviews:"1,122", imp:5, priority:"medium", url:"https://www.linkedin.com/learning/learning-ip-addressing-2"},
+  {n:15, title:"CCST Cybersecurity (100-160) Cert Prep", dur:"6h 26m", level:"Intermediate", rating:4.8, reviews:"32", imp:7, priority:"high", url:"https://www.linkedin.com/learning/cisco-certified-support-technician-ccst-cybersecurity-100-160-cert-prep"},
 ].map(c => ({...c, durMin:durToMin(c.dur), priorityRank:priorityRank[c.priority]}));
 
 // ─── SORTING ────────────────────────────────────────────
@@ -662,6 +663,7 @@ const courseSections = {
   12: ["Introduction","1. Wireless LAN Designs","2. Selecting Wi-Fi Channels","3. Service Sets","4. Wi-Fi Radio Technologies","5. Wi-Fi Standards","6. Wireless Security","7. Installing an Autonomous AP","8. Installing a Lightweight AP","Conclusion"],
   13: ["Welcome to the Course!","1. Foundations of Digital Defense","2. Threat Detection and Surveillance","3. Endpoint Protection and Analysis","4. Network Traffic Analysis and Interpretation","5. Cybersecurity Governance and Best Practices","6. Exam Preparation","Conclusion"],
   14: ["Introduction","1. Learning IP Addressing","Conclusion"],
+  15: ["Introduction","1. Cybersecurity Essentials and Core Concepts","2. Threat Landscape and Attack Motives","3. Strengthening Your Security Posture","4. Network Foundations and Security Fundamentals","5. Controlling Access and Protecting the Network Edge","6. Operating System Security and Network Tools","7. System Maintenance, Updates, and Logging","8. Security Assessment and Risk Analysis","9. Security Incident Response","10. Exam Preparation","11. Congratulations and Next Steps"],
 };
 
 function classifySection(title){
@@ -929,6 +931,24 @@ const movieCast = {
       {lesson:"Conclusion",char:{name:"Binary Bob",emoji:"🕵️"},role:"Detective",dialogue:"Quick case closed! You understand IP addresses — their purpose, format, and assignment. Onward to subnetting!"},
     ]
   },
+  15: {
+    movie:"CCST Cybersecurity: The Defender's Initiation", genre:"🛡️ Cyber Origin Story",
+    mainChar:{name:"Cyber Cadet Nisaar",emoji:"🛡️",role:"The Cadet — a beginner rising to become a certified cybersecurity support technician"},
+    cast:[
+      {lesson:"Introduction",char:{name:"Cyber Cadet Nisaar",emoji:"🛡️"},role:"Cadet",dialogue:"I'm Cyber Cadet Nisaar, starting my cybersecurity journey! The CCST Cybersecurity 100-160 is my first security cert. Let's learn to defend!"},
+      {lesson:"1. Cybersecurity Essentials and Core Concepts",char:{name:"Concept Clara",emoji:"💡"},role:"Teacher",dialogue:"CIA triad — Confidentiality, Integrity, Availability! I'm Clara, back to teach security fundamentals. Every defender starts here!"},
+      {lesson:"2. Threat Landscape and Attack Motives",char:{name:"Threat Hunter",emoji:"🔍"},role:"Hunter",dialogue:"Malware, ransomware, APTs, social engineering — I'm the Threat Hunter! Know your enemies. Understanding motives is half the battle!"},
+      {lesson:"3. Strengthening Your Security Posture",char:{name:"Security Sage",emoji:"🛡️"},role:"Guardian",dialogue:"Defense in depth, least privilege, zero trust — I'm the Security Sage! A strong posture is your best defense. Build layers!"},
+      {lesson:"4. Network Foundations and Security Fundamentals",char:{name:"Protocol Pete",emoji:"📡"},role:"Expert",dialogue:"Firewalls, IDS/IPS, VPNs, DMZ — I'm Pete, returning! Network security fundamentals. Secure the perimeter AND the interior!"},
+      {lesson:"5. Controlling Access and Protecting the Network Edge",char:{name:"ACL Anna",emoji:"🔒"},role:"Gatekeeper",dialogue:"AAA, RADIUS, TACACS+, 802.1X — I'm ACL Anna! Control who enters your network. No unauthorized access on my watch!"},
+      {lesson:"6. Operating System Security and Network Tools",char:{name:"OS Oscar",emoji:"💻"},role:"Specialist",dialogue:"Hardening, patching, Wireshark, Nmap — I'm OS Oscar! Secure the OS and use the right tools. Every endpoint matters!"},
+      {lesson:"7. System Maintenance, Updates, and Logging",char:{name:"Manager Mia",emoji:"📊"},role:"Operations",dialogue:"Patching, updates, Syslog, SIEM — I'm Mia! Keep systems updated and logs flowing. Visibility is security!"},
+      {lesson:"8. Security Assessment and Risk Analysis",char:{name:"Risk Rachel",emoji:"⚠️"},role:"Analyst",dialogue:"Vulnerability scans, risk assessment, CVSS — I'm Risk Rachel! Identify weaknesses before attackers do. Assess, don't guess!"},
+      {lesson:"9. Security Incident Response",char:{name:"Doctor Diag",emoji:"🚨"},role:"Responder",dialogue:"Detect, contain, eradicate, recover — I'm Doctor Diag, now an Incident Responder! When attacks happen, I'm the first on scene!"},
+      {lesson:"10. Exam Preparation",char:{name:"Exam Expert",emoji:"📝"},role:"Strategist",dialogue:"The CCST Cybersecurity exam approaches! I'm the Exam Expert. Review, strategy, confidence — you're ready to defend!"},
+      {lesson:"11. Congratulations and Next Steps",char:{name:"Cyber Cadet Nisaar",emoji:"🏆"},role:"Cadet",dialogue:"I did it! CCST Cybersecurity complete! From beginner to certified defender. Next stop: CCNA Cybersecurity! 🎉"},
+    ]
+  },
 };
 
 function renderFlowcharts(){
@@ -1037,9 +1057,10 @@ const plannerData = (() => {
     {start:19, end:28, course:6, title:"CCST Networking (100-150) Cert Prep"},
     {start:29, end:48, course:7, title:"CCNA v1.1 (200-301) Cert Prep"},
     {start:49, end:55, course:13, title:"CCNA Cybersecurity (200-201) v1.2 Cert Prep"},
-    {start:56, end:70, course:8, title:"CCNP ENCOR v1.2 (350-401) Cert Prep"},
-    {start:71, end:82, course:9, title:"CCNP ENARSI (300-410) Cert Prep"},
-    {start:83, end:91, course:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep"},
+    {start:56, end:62, course:15, title:"CCST Cybersecurity (100-160) Cert Prep"},
+    {start:63, end:75, course:8, title:"CCNP ENCOR v1.2 (350-401) Cert Prep"},
+    {start:76, end:84, course:9, title:"CCNP ENARSI (300-410) Cert Prep"},
+    {start:85, end:91, course:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep"},
   ];
 
   // Spaced repetition intervals: review on Day+1, Day+3, Day+7, Day+14, Day+30
