@@ -2510,106 +2510,95 @@ COPY-PASTE FORMAT (one prompt per clip)
 
 ${scenes.map((s, i) => `[CLIP ${i+1}] ${s.speaker} | ${drama.setting} | ${s.visual} | Voiceover: "${s.dialogue}" | ${i === 0 ? 'Opening shot' : 'Continues from Clip ' + i} | 10 seconds | Keep character design consistent`).join('\n\n')}`;
 
+  // Build all character prompts (one block) and all scene prompts (one block)
+  const allCharPrompts = drama.chars.map(c => {
+    return `CHARACTER ${drama.chars.indexOf(c)+1}: ${c.emoji} ${c.name}
+Role: ${c.role}
+Setting: ${drama.setting}
+Art Style: Professional animated educational video, clean modern design, consistent character sheet.
+Consistency: Same face, same outfit, same color palette across ALL clips. Instantly recognizable in every scene.
+Personality: ${c.role}`;
+  }).join('\n\n---\n\n');
+
+  const allScenePrompts = scenes.map((s, i) => {
+    const charName = s.speaker.replace(/^[^\s]+\s/, '').trim();
+    const charEmoji = s.speaker.split(' ')[0];
+    const allCharNames = drama.chars.map(c => `${c.emoji} ${c.name}`).join(', ');
+    return `SCENE ${i+1} of ${scenes.length} — 10 seconds — ${i === 0 ? 'OPENING SHOT' : 'CONTINUES FROM CLIP ' + i}
+Setting: ${drama.setting}
+Active Character: ${charEmoji} ${charName}
+All Characters: ${allCharNames}
+Visual: ${s.visual}
+Continuity: ${i === 0 ? 'First clip — establish setting and introduce character.' : `Continues from Clip ${i}. Identical character designs, background, lighting. ${charName} in same position as last seen.`}
+Dialogue: "${s.dialogue}"
+Style: Professional educational animation. Clean backgrounds. Character-consistent. 10-second. Smooth transitions.`;
+  }).join('\n\n===\n\n');
+
   output.innerHTML = `
     <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <h4 style="color:var(--accent);font-size:.95rem">🎭 Auto-Generated Animation Script</h4>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="flow-btn" onclick="copyFullPrompt()" style="border-color:var(--accent);color:var(--accent)">📋 Copy Full Prompt</button>
-          <button class="flow-btn" onclick="copyClipPrompts()">📋 Copy Clip-by-Clip</button>
-          <button class="flow-btn" onclick="downloadModalScript()">💾 Download</button>
+          <button class="flow-btn" onclick="downloadModalScript()">💾 Download All</button>
         </div>
       </div>
       <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px">
         <strong style="color:var(--accent)">Setting:</strong> ${drama.setting} · 
         <strong style="color:var(--accent)">Characters:</strong> ${drama.chars.length} · 
-        <strong style="color:var(--accent)">Clips:</strong> ${scenes.length} × 10 seconds = ${scenes.length * 10}s total
+        <strong style="color:var(--accent)">Clips:</strong> ${scenes.length} × 10s = ${scenes.length * 10}s total
       </div>
       <div style="font-size:.78rem;color:var(--muted);padding:8px 12px;background:rgba(34,197,94,.05);border-radius:6px;border:1px solid rgba(34,197,94,.15);margin-top:8px">
-        ✅ <strong style="color:#4ade80">Ready to use!</strong> No transcript needed. Each clip is 10 seconds. Characters stay consistent. Each clip continues from where the previous ended.
+        ✅ <strong style="color:#4ade80">Ready to use!</strong> Step 1: Generate ALL characters. Step 2: Generate ALL scenes. Two copy buttons — one for characters, one for scenes.
       </div>
     </div>
 
-    <!-- Character Reference Card -->
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
-      <h4 style="color:var(--accent);margin-bottom:10px;font-size:.9rem">🎭 Character Reference (keep consistent across ALL clips)</h4>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
-        ${drama.chars.map(c => `
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border-radius:8px;border-left:3px solid var(--accent)">
-            <span style="font-size:1.6rem">${c.emoji}</span>
-            <div>
-              <div style="font-weight:700;color:var(--text);font-size:.85rem">${c.name}</div>
-              <div style="font-size:.72rem;color:var(--accent)">${c.role}</div>
-            </div>
-          </div>
-        `).join('')}
+    <!-- STEP 1: ALL CHARACTER PROMPTS IN ONE PLACE -->
+    <div style="background:rgba(168,85,247,.05);border:2px solid rgba(168,85,247,.2);border-radius:12px;padding:18px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h4 style="color:#c084fc;font-size:.95rem">🎨 STEP 1 — ALL CHARACTER PROMPTS (generate all characters at once)</h4>
+        <button class="flow-btn" onclick="copyTextById('all-char-prompts')" style="border-color:rgba(168,85,247,.3);color:#c084fc;font-size:.78rem">📋 Copy All Character Prompts</button>
       </div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px">Copy this entire block and paste into Google Flow. This generates ALL ${drama.chars.length} characters at once with consistent design.</p>
+      <div style="font-size:.76rem;color:var(--text);font-family:monospace;line-height:1.7;background:var(--card);padding:14px;border-radius:8px;border:1px solid var(--border);white-space:pre-wrap" id="all-char-prompts">${allCharPrompts}</div>
     </div>
 
-    <!-- Clip-by-Clip Breakdown -->
-    ${scenes.map((s, i) => {
-      const charName = s.speaker.replace(/^[^\s]+\s/, '').trim();
-      const charEmoji = s.speaker.split(' ')[0];
-      const prevClip = i > 0 ? `Continues from Clip ${i}. ` : 'Opening shot. ';
-      const allCharNames = drama.chars.map(c => `${c.emoji} ${c.name}`).join(', ');
+    <!-- STEP 2: ALL SCENE/DIALOGUE PROMPTS IN ONE PLACE -->
+    <div style="background:rgba(79,156,255,.05);border:2px solid rgba(79,156,255,.2);border-radius:12px;padding:18px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h4 style="color:var(--accent);font-size:.95rem">🎬 STEP 2 — ALL SCENE & DIALOGUE PROMPTS (generate all videos together)</h4>
+        <button class="flow-btn" onclick="copyTextById('all-scene-prompts')" style="font-size:.78rem">📋 Copy All Scene Prompts</button>
+      </div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px">Copy this entire block and paste into Google Flow AFTER characters are generated. Each scene is 10 seconds. Scenes flow continuously — each picks up where the previous ended.</p>
+      <div style="font-size:.76rem;color:var(--text);font-family:monospace;line-height:1.7;background:var(--card);padding:14px;border-radius:8px;border:1px solid var(--border);white-space:pre-wrap" id="all-scene-prompts">${allScenePrompts}</div>
+    </div>
 
-      // Per-character prompts for THIS scene's speaker
-      const charPrompt = `CHARACTER DESIGN — ${charEmoji} ${charName}\nRole: ${drama.chars.find(c => c.name === charName)?.role || 'Character'}\nSetting: ${drama.setting}\nArt style: Professional animated educational video, clean modern design, consistent character sheet.\nRequirements: Same face, same outfit, same color palette across ALL clips. This character must be instantly recognizable in every scene.\nPersonality: ${drama.chars.find(c => c.name === charName)?.role || 'Network professional'}`;
-
-      // Professional scene prompt referencing the character
-      const scenePrompt = `SCENE ${i+1} of ${scenes.length} — 10 seconds — ${i === 0 ? 'OPENING SHOT' : 'CONTINUES FROM CLIP ' + i}\n\nSetting: ${drama.setting}\nActive Character: ${charEmoji} ${charName}\nAll Characters in Scene: ${allCharNames}\n\nVisual Direction: ${s.visual}\n\nContinuity: ${i === 0 ? 'This is the first clip — establish the setting and introduce the character.' : `This clip continues directly from Clip ${i}. Maintain identical character designs, background, and lighting. The character ${charName} should be in the same position where they were last seen.`}\n\nVoiceover Dialogue: "${s.dialogue}"\n\nStyle: Professional educational animation. Clean backgrounds. Character-consistent design. 10-second duration. Smooth transitions.`;
-
-      return `
-      <div class="anim-scene" id="clip-${i+1}">
-        <div class="anim-scene-header">
-          <div class="anim-scene-num">${i+1}</div>
-          <div class="anim-scene-title">Clip ${i+1} — Seconds ${i*10}–${(i+1)*10}s</div>
+    <!-- Individual clip breakdown for reference -->
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
+      <h4 style="color:var(--accent);margin-bottom:10px;font-size:.9rem">📋 Clip Breakdown (reference — use the copy buttons above for generation)</h4>
+      ${scenes.map((s, i) => `
+        <div style="padding:10px 14px;background:var(--card);border-radius:8px;margin-bottom:8px;border-left:3px solid ${i === 0 ? 'var(--accent2)' : 'var(--accent)'}">
+          <div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:4px">Clip ${i+1} — ${i*10}–${(i+1)*10}s — ${s.speaker}</div>
+          <div style="font-size:.8rem;color:var(--muted);font-style:italic;line-height:1.5">"${s.dialogue}"</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:4px">🎬 ${s.visual}</div>
         </div>
-        <div class="anim-scene-setting">📍 ${drama.setting} ${i === 0 ? '— OPENING SHOT' : '— CONTINUES FROM CLIP ' + i}</div>
-        <div class="anim-dialogue">
-          <div class="speaker">${s.speaker}</div>
-          <div class="line">"${s.dialogue}"</div>
-        </div>
-        <div class="anim-visual">🎬 <strong>Visual:</strong> ${s.visual}</div>
+      `).join('')}
+    </div>
 
-        <!-- Character Prompt for this scene's speaker -->
-        <div style="margin-top:10px;padding:12px 14px;background:rgba(168,85,247,.05);border-radius:8px;border:1px solid rgba(168,85,247,.15)">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-size:.72rem;color:#c084fc;font-weight:600">🎨 STEP 1 — CHARACTER PROMPT for ${charEmoji} ${charName} (copy & generate character first):</div>
-            <button class="flow-btn" onclick="copyTextById('char-prompt-${i+1}')" style="font-size:.68rem;border-color:rgba(168,85,247,.3);color:#c084fc">📋 Copy Character Prompt</button>
-          </div>
-          <div style="font-size:.76rem;color:var(--text);font-family:monospace;line-height:1.6;background:var(--card);padding:10px 14px;border-radius:6px;border:1px solid var(--border);white-space:pre-wrap" id="char-prompt-${i+1}">${charPrompt}</div>
-        </div>
-
-        <!-- Scene Prompt -->
-        <div style="margin-top:8px;padding:12px 14px;background:rgba(79,156,255,.05);border-radius:8px;border:1px solid rgba(79,156,255,.15)">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-size:.72rem;color:var(--accent);font-weight:600">🎬 STEP 2 — SCENE PROMPT (copy & generate scene after character is ready):</div>
-            <button class="flow-btn" onclick="copyTextById('scene-prompt-${i+1}')" style="font-size:.68rem">📋 Copy Scene Prompt</button>
-          </div>
-          <div style="font-size:.76rem;color:var(--text);font-family:monospace;line-height:1.6;background:var(--card);padding:10px 14px;border-radius:6px;border:1px solid var(--border);white-space:pre-wrap" id="scene-prompt-${i+1}">${scenePrompt}</div>
-        </div>
-
-        ${i < scenes.length - 1 ? `<div style="font-size:.72rem;color:var(--muted);margin-top:8px;padding:4px 10px;background:rgba(79,156,255,.05);border-radius:4px">➡️ <strong>End state:</strong> Position ${charName} for seamless transition into Clip ${i+2}. Keep all visual elements consistent.</div>` : `<div style="font-size:.72rem;color:var(--muted);margin-top:8px;padding:4px 10px;background:rgba(34,197,94,.05);border-radius:4px">🏁 <strong>Final clip:</strong> End with satisfying conclusion — fade to black or show summary card with key takeaway.</div>`}
-      </div>`;
-    }).join('')}
-
-    <!-- Full Prompt (hidden, for copy) -->
-    <textarea id="fullPromptText" style="display:none">${flowPrompt}</textarea>
+    <!-- Hidden full prompt for download -->
+    <textarea id="fullPromptText" style="display:none">CHARACTER PROMPTS:\n${allCharPrompts}\n\nSCENE PROMPTS:\n${allScenePrompts}</textarea>
 
     <!-- Instructions -->
     <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px">
       <h4 style="color:var(--accent);margin-bottom:8px;font-size:.9rem">📋 How to Use in Google Flow</h4>
       <ol style="font-size:.82rem;color:var(--muted);line-height:1.8;padding-left:20px">
-        <li>Click <strong style="color:var(--text)">"📋 Copy Full Prompt"</strong> to copy everything, OR copy individual clips one at a time</li>
-        <li>Open <strong style="color:var(--text)">Google Flow</strong> and create a new project</li>
-        <li>For <strong style="color:var(--text)">Clip 1</strong>: Paste the prompt → generate 10-second video → this establishes character designs</li>
-        <li>For <strong style="color:var(--text)">Clip 2</strong>: Copy that clip's prompt → paste → generate → it continues from Clip 1's ending</li>
-        <li>Repeat for each clip — characters stay consistent, story flows continuously</li>
+        <li>Click <strong style="color:#c084fc">"📋 Copy All Character Prompts"</strong> → paste into Google Flow → generate ALL characters at once</li>
+        <li>Screenshot the generated characters — use as reference for consistency</li>
+        <li>Click <strong style="color:var(--accent)">"📋 Copy All Scene Prompts"</strong> → paste into Google Flow → generate ALL scenes</li>
+        <li>Each scene is 10 seconds and continues from the previous clip</li>
         <li>Stitch all clips together in a video editor → export as MP4</li>
       </ol>
       <div style="margin-top:10px;padding:10px 14px;background:rgba(245,158,11,.05);border-radius:8px;border:1px solid rgba(245,158,11,.15);font-size:.78rem;color:#fbbf24">
-        💡 <strong>Pro Tip:</strong> Generate Clip 1 first and screenshot the character designs. Use that screenshot as a reference image in Google Flow for Clips 2, 3, etc. to keep characters consistent.
+        💡 <strong>Pro Tip:</strong> Generate ALL characters first using Step 1. Then use those character designs as reference images when generating scenes in Step 2. This keeps every character consistent across all clips.
       </div>
     </div>
   `;
