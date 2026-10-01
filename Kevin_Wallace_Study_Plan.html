@@ -2184,37 +2184,344 @@ let animStudioChars = [];
 let animStudioTopic = 'osi';
 let animStudioLesson = '';
 
+// ─── AUTO LESSON DRAMA GENERATOR ────────────────────────
+// Pre-written dramas for every lesson topic — no transcript needed
+const lessonDramas = {
+  // CCNA Course (7) - 34 lessons
+  "Introduction": {
+    setting:"A networking academy on the first day of school",
+    chars:[{emoji:"🧙‍♂️",name:"Professor Kevin",role:"The Mentor"},{emoji:"🎓",name:"Student Nisaar",role:"The Learner"}],
+    scenes:[
+      {speaker:"🧙‍♂️ Professor Kevin",dialogue:"Welcome, young apprentice! You're about to embark on a journey that will transform how you see the world. Every internet connection, every video call, every message — it all starts here.",visual:"Wide shot of a classroom. Professor Kevin stands at the front. Student Nisaar walks in nervously. Camera follows Nisaar to his seat."},
+      {speaker:"🎓 Student Nisaar",dialogue:"I'm nervous, Professor. I don't know anything about networking. Is it too late to learn?",visual:"Close-up on Nisaar's face, showing uncertainty. The classroom feels vast and intimidating."},
+      {speaker:"🧙‍♂️ Professor Kevin",dialogue:"It's never too late. Every expert was once a beginner. By the end of this journey, you'll understand how the internet works — from the cables in the ground to the apps on your phone. Let's begin!",visual:"Kevin smiles warmly. The classroom transforms — diagrams and network animations appear floating around them. Nisaar's expression changes from fear to excitement."},
+    ]
+  },
+  "Common Network Components": {
+    setting:"A city with different buildings representing network devices",
+    chars:[{emoji:"🔧",name:"Router Ray",role:"The GPS Navigator"},{emoji:"🔀",name:"Switch Sally",role:"The Traffic Director"},{emoji:"🛡️",name:"Firewall Fiona",role:"The Security Guard"},{emoji:"📡",name:"AP Andy",role:"The Wireless Broadcaster"}],
+    scenes:[
+      {speaker:"🔀 Switch Sally",dialogue:"I'm the heart of every office! I connect all the computers in a building. Think of me as the receptionist who knows exactly which desk everyone sits at — I use MAC addresses to deliver data to the right computer.",visual:"Show an office building. Sally stands at a switchboard, directing data packets (envelopes) to the correct desks. Each desk has a MAC address label."},
+      {speaker:"🛣️ Router Ray",dialogue:"And I'm the one who connects different buildings together! When data needs to go from this office to another city, I plan the route. I'm the GPS of the internet — I use IP addresses to find the destination.",visual:"Pull back to show a city map. Ray stands at an intersection, pointing data packets (cars) down different roads toward other buildings/cities."},
+      {speaker:"🛡️ Firewall Fiona",dialogue:"Not so fast! I stand at every door and gate. I check every packet that tries to enter — is it safe? Is it allowed? I'm the bouncer of the network. No malicious traffic gets past me.",visual:"Fiona stands at the building entrance with a clipboard. Packets approach as visitors. She checks some (green checkmark) and blocks others (red X)."},
+      {speaker:"📡 AP Andy",dialogue:"And I make it all wireless! I broadcast data through the air so you can work from your couch, your bed, or your favorite coffee shop. No cables needed — just thin air!",visual:"Andy stands on the roof, radiating signal waves (concentric circles). People on couches and in cafes receive the signal on their devices."},
+    ]
+  },
+  "Common Network Architectures": {
+    setting:"An architect's office with blueprints",
+    chars:[{emoji:"📐",name:"Architect Amy",role:"Network Designer"},{emoji:"🏢",name:"Three-Tier Theo",role:"Traditional Design"},{emoji:"🌿",name:"Spine-Leaf Stella",role:"Modern Design"}],
+    scenes:[
+      {speaker:"📐 Architect Amy",dialogue:"Every network needs a blueprint. You wouldn't build a house without a plan, would you? Let me show you the two main ways we design networks.",visual:"Amy stands over a large blueprint table. Camera looks down at the blueprints showing network topologies."},
+      {speaker:"🏢 Three-Tier Theo",dialogue:"I'm the classic design — Access, Distribution, and Core layers. Like a company: workers (access), managers (distribution), and the CEO (core). Data flows up and down the chain. I've been around forever and I'm reliable!",visual:"Show a 3-tier pyramid. Workers at the bottom, managers in the middle, CEO at top. Data arrows flow up and down. Theo stands proudly beside it."},
+      {speaker:"🌿 Spine-Leaf Stella",dialogue:"And I'm the modern design — every leaf switch connects to every spine switch. No hierarchy, no bottlenecks. Like a flat organization where everyone talks to everyone. I'm faster and more scalable for data centers!",visual:"Show a flat mesh topology. All leaf switches connect to all spine switches. Stella appears beside it with a confident pose. Compare the two designs side by side."},
+    ]
+  },
+  "Network Cabling": {
+    setting:"A hardware store with cables hanging on walls",
+    chars:[{emoji:"🧵",name:"Cable Carl",role:"The Cable Expert"},{emoji:"⚡",name:"Fiber Fiona",role:"Speed Demon"},{emoji:"🛡️",name:"Copper Cooper",role:"Reliable Worker"}],
+    scenes:[
+      {speaker:"🧵 Cable Carl",dialogue:"Cables are the veins of the internet! Without them, nothing flows. Let me show you the two main types — copper and fiber. Each has its own personality.",visual:"Carl stands in a hardware store aisle filled with colorful cables. He picks up different cables as he explains."},
+      {speaker:"🛡️ Copper Cooper",dialogue:"I'm the reliable workhorse! I've been carrying data for decades. I use electrical signals — simple, dependable, affordable. I come in categories: Cat5e, Cat6, Cat6a. The higher the category, the faster I go. But I have a limit — about 100 meters.",visual:"Cooper flexes his muscles. Show a copper cable cross-section with electrical pulses flowing through it. Distance counter shows 100m limit."},
+      {speaker:"⚡ Fiber Fiona",dialogue:"And I'm the speed queen! I use light instead of electricity — pulses of laser light through glass strands. I can travel kilometers without losing signal. I come in single-mode (one laser, long distance) and multi-mode (multiple LEDs, shorter distance). I'm the future!",visual:"Fiona zooms across the screen with light trails. Show a fiber cable cross-section with light pulses. Distance counter shows 40km+. Fiona crosses the finish line while Cooper is still at the starting block."},
+    ]
+  },
+  "Binary Numbering": {
+    setting:"A math classroom with floating 1s and 0s",
+    chars:[{emoji:"🔢",name:"Binary Bob",role:"The Code Breaker"},{emoji:"💡",name:"Student Nisaar",role:"The Learner"}],
+    scenes:[
+      {speaker:"🔢 Binary Bob",dialogue:"Computers don't understand English, Spanish, or any human language. They only understand two things: ON and OFF. 1 and 0. That's it! Everything — your photos, videos, messages — is all just 1s and 0s.",visual:"Bob stands in front of a blackboard. The room is dark. Floating 1s and 0s drift around him like fireflies. He catches one and holds it up."},
+      {speaker:"💡 Student Nisaar",dialogue:"But how can just two numbers represent everything? That seems impossible!",visual:"Nisaar looks confused, holding up his phone. How can this complex device understand only 1s and 0s?"},
+      {speaker:"🔢 Binary Bob",dialogue:"It's like a light switch! One switch gives you 2 options (on/off). Two switches give you 4. Eight switches give you 256. Thirty-two switches give you 4 billion! That's how an IP address works — 32 binary digits create every IP address on Earth.",visual:"Show light switches appearing one by one. Each new switch doubles the possibilities. The numbers grow exponentially: 2, 4, 8, 16... 4 billion. Nisaar's eyes widen with understanding."},
+    ]
+  },
+  "IPv4 Address": {
+    setting:"A post office with envelopes and addresses",
+    chars:[{emoji:"📍",name:"Address Ava",role:"IP Address Analyst"},{emoji:"🏠",name:"Private Pete",role:"Internal User"},{emoji:"🌍",name:"Public Paula",role:"Internet Citizen"}],
+    scenes:[
+      {speaker:"📍 Address Ava",dialogue:"Every device on a network needs an address — just like every house needs a street address. Without it, data can't find you. IPv4 addresses have 4 sections separated by dots: 192.168.1.10. Each section is called an octet — 8 bits of binary.",visual:"Ava stands at a post office counter. She holds up an envelope with '192.168.1.10' written on it. The address glows."},
+      {speaker:"🏠 Private Pete",dialogue:"I'm a private address — I only exist inside a company's network. I'm like an extension number in an office phone system. You can call me internally, but from outside, you need the main number. Addresses like 192.168.x.x and 10.x.x.x are private — they're free for anyone to use!",visual:"Pete sits in an office cubicle. His address label says '192.168.1.10 — Internal Only'. He can talk to colleagues but can't reach the outside world directly."},
+      {speaker:"🌍 Public Paula",dialogue:"And I'm a public address — I'm unique on the entire internet! No two devices have the same public IP. I'm like your home address — the post office can deliver mail directly to me from anywhere in the world.",visual:"Paula stands on a world map. Her address is unique — a glowing beacon visible from space. Data packets fly to her from all over the globe."},
+    ]
+  },
+  "Subnetting": {
+    setting:"A pizzeria where a ninja slices pizza",
+    chars:[{emoji:"🍕",name:"Chef Pietro",role:"Network Owner"},{emoji:"🥷",name:"Subnet Ninja",role:"The Slicer"},{emoji:"👨‍💼",name:"Manager Mike",role:"Needs 60 IPs"},{emoji:"👩‍💻",name:"Dev Dana",role:"Needs 30 IPs"}],
+    scenes:[
+      {speaker:"🍕 Chef Pietro",dialogue:"I have one giant pizza — 192.168.1.0/24. It has 256 slices. But I have 5 departments, each needing different amounts. If I give the whole pizza to one department, the others starve!",visual:"A giant pizza sits on a table. It's labeled '/24 = 256 slices'. Five hungry departments wait around the table."},
+      {speaker:"🥷 Subnet Ninja",dialogue:"I am the Subnet Ninja. I slice networks with precision. My blade is the subnet mask. I calculate using the power of 2: 2, 4, 8, 16, 32, 64, 128. Each slice is perfectly sized — no waste, no overlap.",visual:"The Ninja appears in a puff of smoke. He draws a katana labeled 'subnet mask'. Binary numbers float around him: 2^n calculations."},
+      {speaker:"👨‍💼 Manager Mike",dialogue:"I need 60 IP addresses for my team!",visual:"Mike holds up a sign saying '60 IPs needed'. He looks anxious."},
+      {speaker:"🥷 Subnet Ninja",dialogue:"60? You need 64 — the nearest power of 2. I give you a /26 slice: 192.168.1.0/26. Usable range: .1 to .62. 62 usable addresses. Enough for your team with room to grow!",visual:"The Ninja slices the pizza. A slice labeled '/26 = 64' flies to Mike's plate. The range '.1-.62' appears. Mike smiles and eats."},
+      {speaker:"👩‍💻 Dev Dana",dialogue:"I need 30 IPs for my developers!",visual:"Dana holds up a sign saying '30 IPs needed'."},
+      {speaker:"🥷 Subnet Ninja",dialogue:"30? You need 32 — a /27 slice: 192.168.1.64/27. Usable range: .65 to .94. Perfectly sized, no overlap with Mike's slice!",visual:"Another slice labeled '/27 = 32' flies to Dana. Range '.65-.94' appears. The pizza now has clean, precise slices. Everyone gets exactly what they need."},
+    ]
+  },
+  "IPv6": {
+    setting:"A phone company transitioning from old to new technology",
+    chars:[{emoji:"📞",name:"IPv4 Ian",role:"Old Phone System"},{emoji:"📱",name:"IPv6 Iris",role:"New Phone System"},{emoji:"😰",name:"Ian's Boss",role:"The Worried Manager"}],
+    scenes:[
+      {speaker:"📞 IPv4 Ian",dialogue:"I've been assigning phone numbers since 1981. I have 4.3 billion addresses. But... we're running out. The world has more devices than I have numbers. I'm exhausted.",visual:"Ian sits at a desk piled with paperwork. His phone book is nearly full. He looks tired and stressed. A counter shows '4.3 billion — nearly exhausted'."},
+      {speaker:"😰 Ian's Boss",dialogue:"What do you mean we're running out?! Every phone, laptop, tablet, smart TV, and IoT device needs an address! What are we going to do?!",visual:"The Boss bursts in, panicking. Behind him, a line of devices stretches to the horizon — all waiting for addresses."},
+      {speaker:"📱 IPv6 Iris",dialogue:"Relax, everyone. I'm here. I have 340 undecillion addresses. That's 3.4 × 10^38. Enough for every grain of sand on Earth to have 100 addresses. I use 128 bits instead of 32. I write in hexadecimal: 2001:db8::1. I am the future.",visual:"Iris walks in confidently. A massive phone book appears beside her — infinitely thick. The number '340,282,366,920,938,000,000,000,000,000,000,000,000' floats above her. Ian's tiny phone book looks like a pamphlet next to hers."},
+    ]
+  },
+  "Ethernet Switch": {
+    setting:"A mailroom with sorting machines",
+    chars:[{emoji:"🔀",name:"Switch Sally",role:"The Mailroom Manager"},{emoji:"📋",name:"CAM Table Tina",role:"The Address Book"}],
+    scenes:[
+      {speaker:"🔀 Switch Sally",dialogue:"I'm a switch — the hardest worker in the network. Every time a device sends me a frame, I look at the MAC address and deliver it to the exact right port. I don't broadcast to everyone like an old hub did — I'm smart!",visual:"Sally stands at a sorting machine. Envelopes (frames) arrive with MAC address labels. She sorts them precisely into different output slots."},
+      {speaker:"📋 CAM Table Tina",dialogue:"I'm Sally's memory — the CAM table. I remember which MAC address is on which port. When a new device connects, I learn its address. If I don't know where to send something, I flood it to all ports and learn from the response.",visual:"Tina holds a clipboard (CAM table) showing MAC addresses mapped to port numbers. A new device connects — Tina writes down its address. An unknown frame arrives — Tina shrugs and sends it everywhere, then learns from the reply."},
+    ]
+  },
+  "VLANs": {
+    setting:"An office building where walls appear and disappear",
+    chars:[{emoji:"🏢",name:"Manager Bea",role:"Building Manager"},{emoji:"🚪",name:"VLAN Valerie",role:"Wall Builder"},{emoji:"🛗",name:"Trunk Tom",role:"Elevator Operator"}],
+    scenes:[
+      {speaker:"🏢 Manager Bea",dialogue:"Our office is chaos! Sales can hear Engineering's conversations. HR broadcasts are reaching IT. Everyone is in everyone's business. We need separation!",visual:"An open-plan office. Everyone is talking over each other. Speech bubbles overlap. Bea looks overwhelmed covering her ears."},
+      {speaker:"🚪 VLAN Valerie",dialogue:"I build invisible walls! Sales gets VLAN 10, Engineering gets VLAN 20, HR gets VLAN 30. Now broadcasts only reach people in the same VLAN. Each department has their own private space!",visual:"Valerie waves her hand and glowing walls appear, dividing the office into colored zones: blue (Sales/VLAN 10), green (Eng/VLAN 20), orange (HR/VLAN 30). Broadcasts (ripples) now stay within each zone."},
+      {speaker:"🛗 Trunk Tom",dialogue:"And I'm the elevator! When people need to travel between buildings, I carry them on a single cable. But I tag each person with a VLAN badge — 802.1Q — so they arrive at the correct floor in the other building. One elevator, many destinations!",visual:"Tom operates an elevator between two buildings. Each passenger gets a colored badge as they enter. The elevator travels on a single cable but passengers exit at the correct VLAN floor."},
+    ]
+  },
+  "Spanning Tree": {
+    setting:"A city with bridges forming loops",
+    chars:[{emoji:"🌳",name:"Root Regina",role:"The Elected Leader"},{emoji:"🔍",name:"Inspector Steve",role:"Loop Preventer"},{emoji:"💥",name:"Storm Boris",role:"The Villain"}],
+    scenes:[
+      {speaker:"💥 Storm Boris",dialogue:"Hahaha! This network has redundant links — perfect for my broadcast storm! I'll send frames that circle endlessly, growing and growing until the network CRASHES!",visual:"Boris laughs maniacally. Red frames start circling through a ring of switches. They multiply and accelerate. Switches start smoking and crashing."},
+      {speaker:"🌳 Root Regina",dialogue:"Not on my watch! I am the Root Bridge — elected by lowest Bridge ID. All other switches measure their distance from me. I am the reference point, the leader, the center of the network tree!",visual:"Regina is crowned (crown animation). All other switches bow and display their distance from her. The network transforms from a chaotic ring into an organized tree with Regina at the top."},
+      {speaker:"🔍 Inspector Steve",dialogue:"I walk every path in the network. When I find a redundant link that creates a loop, I block it! The port goes into blocking state — traffic stops on that link. The backup path is there if the primary fails, but no loops allowed!",visual:"Steve walks along network links with a flashlight. He finds a redundant link and places a red X on the port. The loop breaks. The network becomes a clean tree structure. Boris's storm stops — the frames have nowhere to circle."},
+    ]
+  },
+  "Routing": {
+    setting:"A GPS navigation center",
+    chars:[{emoji:"🛣️",name:"Router Ray",role:"The Navigator"},{emoji:"📌",name:"Static Stan",role:"The Manual Mapper"},{emoji:"🌊",name:"OSPF Olivia",role:"The Dynamic Mapper"}],
+    scenes:[
+      {speaker:"🛣️ Router Ray",dialogue:"I'm a router — my job is to forward packets from one network to another. I look at the destination IP address, check my routing table, and send the packet out the correct interface. I'm the GPS of the internet!",visual:"Ray sits at a navigation console. A packet arrives with a destination address. Ray checks his routing table (a map) and points the packet down the correct road."},
+      {speaker:"📌 Static Stan",dialogue:"I'm the simplest routing method — static routes. An administrator manually programs my routes. 'To reach 10.0.0.0/8, send traffic out interface GigabitEthernet0/1.' I'm predictable, use no CPU, but I can't adapt to network changes. If a link goes down, I keep sending traffic into the void!",visual:"Stan holds a fixed map. A road collapses but Stan keeps pointing traffic that way. Packets fall into a hole. Stan doesn't notice — he only follows orders."},
+      {speaker:"🌊 OSPF Olivia",dialogue:"I'm dynamic — I adapt! I talk to other routers, learn the network topology, and calculate the shortest path. If a link fails, I reroute automatically. I use the Dijkstra algorithm — I'm smart, but I use more CPU and bandwidth to maintain my map.",visual:"Olivia's map updates in real-time. When a road collapses, she immediately finds an alternate route and redirects traffic. Packets flow smoothly through the new path. Compare: Stan's traffic still falls into the hole while Olivia's flows perfectly."},
+    ]
+  },
+  "OSPF": {
+    setting:"A cartographer's guild where mapmakers share maps",
+    chars:[{emoji:"🗺️",name:"Mapmaker Olivia",role:"Link-State Expert"},{emoji:"🤝",name:"Neighbor Nick",role:"Handshake Specialist"},{emoji:"👑",name:"DR Derek",role:"Designated Router"},{emoji:"🧮",name:"SPF Sam",role:"Calculator"}],
+    scenes:[
+      {speaker:"🤝 Neighbor Nick",dialogue:"Before we share maps, we must become friends! I perform the OSPF handshake: Hello → Database Description → Link State Request → Link State Update → Link State Ack. Five steps to friendship!",visual:"Nick approaches another router. They perform a handshake animation with 5 steps, each labeled. A friendship badge appears between them."},
+      {speaker:"🗺️ Mapmaker Olivia",dialogue:"Once we're friends, I share my piece of the map — my Link State Advertisement (LSA). It describes my links, their costs, and my neighbors. Every router shares their piece until we all have the complete map.",visual:"Olivia throws map pieces (LSAs) to other routers. Each router has a puzzle piece. They all combine into a complete network map on a table."},
+      {speaker:"👑 DR Derek",dialogue:"On busy networks with many routers, everyone talking at once is chaos! That's why they elect me — the Designated Router. Everyone sends their LSAs to me, and I distribute them. One spokesperson, organized communication!",visual:"A chaotic room with routers all shouting at once. Then an election happens (voting animation). Derek gets a crown. Now everyone sends to Derek, who distributes orderly."},
+      {speaker:"🧮 SPF Sam",dialogue:"Once everyone has the complete map, I run the Dijkstra Shortest Path First algorithm. I calculate the shortest path to every destination from our perspective. The result becomes the routing table — the definitive guide to the network!",visual:"Sam stands before the complete map. Mathematical formulas float around him. Green lines appear showing shortest paths. The routing table materializes as a glowing document."},
+    ]
+  },
+  "NAT": {
+    setting:"A post office that translates addresses",
+    chars:[{emoji:"🏠",name:"Private Pete",role:"Internal User"},{emoji:"📮",name:"NAT Nat",role:"Post Office Manager"},{emoji:"🌍",name:"Internet Ivan",role:"The Outside World"}],
+    scenes:[
+      {speaker:"🏠 Private Pete",dialogue:"I want to send a letter to the internet, but my address is 192.168.1.10 — a private address. The internet doesn't recognize private addresses. I'm trapped inside my own company!",visual:"Pete holds a letter with 'From: 192.168.1.10'. He stands at a window looking out at the internet. A 'NO PRIVATE ADDRESSES' sign blocks the exit."},
+      {speaker:"📮 NAT Nat",dialogue:"I can help! I'm the Network Address Translator. Give me your letter — I'll cross out your private address and write my public address: 203.0.113.5. When the reply comes back, I'll translate it back to your private address. You'll never know I changed it!",visual:"Nat takes Pete's letter. She crosses out '192.168.1.10' and writes '203.0.113.5'. The letter goes out to the internet. The reply comes back to '203.0.113.5'. Nat crosses it out and writes '192.168.1.10'. Pete receives it, unaware of the swap."},
+      {speaker:"🌍 Internet Ivan",dialogue:"I only see Nat's public address. I have no idea Pete exists behind her. Millions of private devices hide behind one public IP — that's how the internet survived running out of IPv4 addresses!",visual:"Ivan looks at the letter — only sees '203.0.113.5'. Behind Nat's post office, millions of private devices are hidden. One public address serves them all."},
+    ]
+  },
+  "ACLs": {
+    setting:"A nightclub with a bouncer at the door",
+    chars:[{emoji:"🛡️",name:"ACL Anna",role:"Head Bouncer"},{emoji:"📋",name:"Standard Stan",role:"ID Checker"},{emoji:"🔍",name:"Extended Erica",role:"Full Inspector"},{emoji:"🚫",name:"Deny Dan",role:"The Silent Blocker"}],
+    scenes:[
+      {speaker:"🛡️ ACL Anna",dialogue:"I'm the bouncer of the network. I stand at every router interface with my clipboard of rules. Every packet that tries to cross — I check it. Permit? You pass. Deny? You're blocked. No exceptions.",visual:"Anna stands at a velvet rope. Packets approach as people. She checks each against her clipboard. Some get green checkmarks (enter), others get red X marks (blocked)."},
+      {speaker:"📋 Standard Stan",dialogue:"I'm the simple checker — I only look at your source IP. 'Are you from 192.168.1.0/24? Come in. From anywhere else? Denied.' Fast, but not very thorough. A clever attacker can spoof their source address.",visual:"Stan checks IDs at the door. He only looks at the 'From' address. Someone with a fake ID walks past — Stan doesn't check anything else."},
+      {speaker:"🔍 Extended Erica",dialogue:"I'm the thorough inspector — I check source, destination, port, protocol, and time. 'You're TCP from 10.0.0.5 going to port 443? Permitted. UDP to port 23? Denied.' I'm detailed and precise. Nothing slips past me!",visual:"Erica inspects a packet with a magnifying glass. She checks 5 different fields. A spoofed packet tries to enter — Erica catches the port mismatch and blocks it."},
+      {speaker:"🚫 Deny Dan",dialogue:"And I'm the implicit deny — the invisible rule at the bottom of every ACL. If no other rule matches, I drop the packet. Silently. No notification, no error message. If in doubt, I block. I'm the silent guardian.",visual:"A packet that matched no rules approaches. Dan appears from the shadows and silently drops it into a trapdoor. The packet vanishes without a sound."},
+    ]
+  },
+  "DHCP": {
+    setting:"A hotel lobby where guests check in",
+    chars:[{emoji:"📢",name:"Client Carl",role:"New Guest"},{emoji:"🏨",name:"DHCP Derek",role:"Hotel Manager"}],
+    scenes:[
+      {speaker:"📢 Client Carl",dialogue:"I just connected to the network but I have no IP address! I'm nobody without an address. I need to shout and hope someone helps me: DISCOVER! Is there a DHCP server out there?!",visual:"Carl enters the hotel lobby looking lost. He shouts 'DISCOVER!' — ripples spread across the lobby. He looks desperate, holding empty hands."},
+      {speaker:"🏨 DHCP Derek",dialogue:"I heard you! I have a room available — 192.168.1.50. Here's my OFFER: IP address 192.168.1.50, subnet mask 255.255.255.0, gateway 192.168.1.1, DNS 8.8.8.8, lease time 8 days. Do you accept?",visual:"Derek behind the desk hears the shout. He pulls out a room key labeled '192.168.1.50' and holds it up: OFFER. A welcome packet with all the network details appears."},
+      {speaker:"📢 Client Carl",dialogue:"Yes! I REQUEST room 192.168.1.50! I'll take it!",visual:"Carl grabs the key eagerly: REQUEST. He's excited — he finally has an address!"},
+      {speaker:"🏨 DHCP Derek",dialogue:"ACKNOWLEDGED! The room is yours for 8 days. When the lease expires, just renew. The DORA dance is complete: Discover, Offer, Request, Acknowledge. Welcome to the network!",visual:"Derek stamps 'ACKNOWLEDGED' on the registration. Carl walks to his room with the key and welcome packet. The letters D-O-R-A appear in sequence above them."},
+    ]
+  },
+  "Wireless": {
+    setting:"A radio station broadcasting through the air",
+    chars:[{emoji:"📻",name:"Frequency Fiona",role:"Radio DJ"},{emoji:"📶",name:"SSID Sam",role:"Station Name"},{emoji:"🔐",name:"WPA3 Wendy",role:"Security Guard"},{emoji:"🏢",name:"WLC Will",role:"Controller"}],
+    scenes:[
+      {speaker:"📻 Frequency Fiona",dialogue:"I broadcast data through thin air! No cables, no wires — just radio waves. I operate on 2.4GHz or 5GHz. 2.4GHz reaches far but is crowded. 5GHz is fast but has shorter range. I'm the magic of Wi-Fi!",visual:"Fiona stands at a radio tower. Concentric waves emanate from her — blue for 2.4GHz (wide reach), red for 5GHz (fast but short). Devices pick up the waves and display content."},
+      {speaker:"📶 SSID Sam",dialogue:"I'm the network name everyone sees: 'CoffeeShop_WiFi'. I'm the public face — I announce 'Here I am! Connect to me!' But I don't reveal the security underneath. I'm just the sign on the door.",visual:"Sam appears as a floating neon sign saying 'CoffeeShop_WiFi'. People see the sign and walk toward it. The sign is welcoming but doesn't show what's behind the door."},
+      {speaker:"🔐 WPA3 Wendy",dialogue:"I encrypt everything! Without me, anyone within range could read your data. WEP was my weak predecessor — cracked in minutes. WPA2 was better. WPA3 is me — I use SAE for bulletproof key exchange. Your data is safe with me!",visual:"Wendy wraps each data transmission in a lock animation (encryption). A hacker tries to read the data but only sees gibberish. She upgrades from WEP (paper lock) → WPA2 (padlock) → WPA3 (vault door)."},
+      {speaker:"🏢 WLC Will",dialogue:"I command an army of access points from headquarters! I coordinate channels to avoid interference, adjust power levels, and handle seamless roaming. When you walk from one AP to another, I hand off your connection — you never even notice!",visual:"Will sits in a control room with a map showing multiple APs. He adjusts channels (colors change) and power (signal strength bars). A person walks from one AP zone to another — the connection transfers seamlessly (green line stays unbroken)."},
+    ]
+  },
+  "Security": {
+    setting:"A castle under siege",
+    chars:[{emoji:"🏰",name:"Firewall Fiona",role:"Castle Gatekeeper"},{emoji:"🔍",name:"IDS Iris",role:"Lookout Tower"},{emoji:"⚔️",name:"IPS Ivan",role:"Active Defender"},{emoji:"👹",name:"Hacker Hank",role:"The Attacker"}],
+    scenes:[
+      {speaker:"👹 Hacker Hank",dialogue:"I'm going to scan their ports, exploit vulnerabilities, and break into their network! They think they're safe behind their little firewall. Let me try...",visual:"Hank approaches the castle from the dark forest. He pulls out tools — port scanner, exploit kit. The castle looms ahead with its walls and moat."},
+      {speaker:"🏰 Firewall Fiona",dialogue:"Not so fast! I inspect every packet at the gate. Stateful inspection — I track every connection. You didn't start a legitimate conversation? Then your packets don't get in. I'm the first line of defense!",visual:"Fiona stands at the castle gate with a shield. Hank's port scan packets approach — Fiona blocks them one by one. Her state table shows no legitimate connection from Hank."},
+      {speaker:"🔍 IDS Iris",dialogue:"I see him from the tower! His scan pattern matches known reconnaissance. I'm alerting the team — INTRUSION DETECTED! But I can only alert... I can't block. I'm the lookout, not the soldier.",visual:"Iris in the tower spots Hank through a telescope. Red alert flags appear. She sends signals (alerts) but Hank keeps trying — she can observe but not act."},
+      {speaker:"⚔️ IPS Ivan",dialogue:"I can do more than watch! INTRUSION PREVENTION — I don't just alert, I BLOCK! I drop his malicious packets in real-time. His connection? Terminated. His exploit? Rejected. Active defense, not passive observation!",visual:"Ivan leaps from the tower with a sword. He slashes Hank's packets out of the air. Hank's connection is severed (red broken line). Hank retreats into the forest, frustrated."},
+    ]
+  },
+  "SDN": {
+    setting:"A tech company transitioning from manual to automated",
+    chars:[{emoji:"🧠",name:"SDN Sophia",role:"The Innovator"},{emoji:"👴",name:"Old-School Oscar",role:"Traditional Network"},{emoji:"🤖",name:"Controller Carl",role:"The Brain"}],
+    scenes:[
+      {speaker:"👴 Old-School Oscar",dialogue:"For 30 years, every switch and router made its own decisions independently. No central control. No big picture. We're all smart individually but we can't coordinate. It's like an orchestra where every musician plays their own song!",visual:"Oscar stands among scattered switches and routers, each making independent decisions. Chaos — no coordination. Data flows in conflicting directions."},
+      {speaker:"🧠 SDN Sophia",dialogue:"That's the old way. Software-Defined Networking separates the control plane (the brain) from the data plane (the muscles). The brain makes all decisions centrally. The muscles just forward packets. One mind, many hands!",visual:"Sophia draws a diagram: a controller (brain) at the top, connected to all switches (muscles) below. The brain sends instructions — the switches execute. Order replaces chaos."},
+      {speaker:"🤖 Controller Carl",dialogue:"I am the brain! I see the entire network. I can program all switches simultaneously. Need to change routing policy? One API call. Need to deploy a new service? One script. What took weeks now takes seconds!",visual:"Carl sits at a central console showing the entire network. He types one command — all switches update simultaneously (green checkmarks everywhere). Compare: Oscar's way (manual, one at a time, weeks) vs Carl's way (automated, all at once, seconds)."},
+    ]
+  },
+  "Automation": {
+    setting:"A network operations center transforming from manual to automated",
+    chars:[{emoji:"🤖",name:"Python Pete",role:"Automation Engineer"},{emoji:"😩",name:"Manual Mary",role:"Overworked Operator"},{emoji:"📝",name:"Ansible Alex",role:"Playbook Writer"}],
+    scenes:[
+      {speaker:"😩 Manual Mary",dialogue:"I have to configure 100 switches tonight. One by one. CLI session after CLI session. Copy, paste, verify, repeat. It's 2 AM. I'm on my 12th switch. I made a typo on switch 8 — now I have to go back and fix it. This is my life every night.",visual:"Mary sits exhausted at a desk with 100 terminals. Coffee cups pile up. A clock shows 2 AM. She types slowly, making errors. Switches show red error lights."},
+      {speaker:"🤖 Python Pete",dialogue:"Mary, there's a better way. I wrote a Python script that configures all 100 switches at once. One script, one execution, zero typos. Watch this...",visual:"Pete walks in with a laptop. He runs one script. All 100 switches configure simultaneously — green lights flash across the board. Mary's jaw drops."},
+      {speaker:"📝 Ansible Alex",dialogue:"And I make it even simpler — I write YAML playbooks that describe the DESIRED state, not the commands. 'These 100 switches should have VLAN 10 configured.' Ansible figures out how to achieve it. You describe WHAT you want, not HOW to do it.",visual:"Alex writes a simple YAML file on screen. Ansible reads it, calculates what changes are needed, and applies them across all switches. The playbook is 5 lines. The result is 100 configured switches."},
+      {speaker:"🤖 Python Pete",dialogue:"What took Mary 8 hours now takes 8 seconds. No typos, no fatigue, no 2 AM shifts. Automation isn't about replacing humans — it's about freeing humans to do creative work instead of repetitive tasks.",visual:"Split screen: Mary's way (8 hours, exhausted, errors) vs Pete's way (8 seconds, perfect, Mary is now smiling and drinking coffee while reading a book). The future is automated."},
+    ]
+  },
+  "VPN": {
+    setting:"A spy movie scene with a secret tunnel",
+    chars:[{emoji:"🕵️",name:"Agent Sam",role:"Secret Agent"},{emoji:"🚇",name:"IPsec Iris",role:"Tunnel Builder"},{emoji:"🔑",name:"IKE Igor",role:"Key Exchange"},{emoji:"👹",name:"Hacker Hank",role:"The Eavesdropper"}],
+    scenes:[
+      {speaker:"🕵️ Agent Sam",dialogue:"I need to send classified data from New York to London. But the internet is public — anyone can intercept my traffic. I need a secure tunnel. A VPN — Virtual Private Network.",visual:"Sam stands in New York. London is across the screen. Between them, the public internet with hackers lurking. Sam holds a classified envelope."},
+      {speaker:"🔑 IKE Igor",dialogue:"First, we need to exchange encryption keys — secretly, even though hackers are watching. I use Diffie-Hellman: we each pick a number, mix it with a shared color, and exchange the result. Even if someone sees the exchange, they can't reverse the math!",visual:"Igor performs a key exchange animation. Two mixing pots with colors. They exchange mixed colors. Hank watches but can't figure out the original colors. Math symbols (prime numbers, generators) float around."},
+      {speaker:"🚇 IPsec Iris",dialogue:"Now I build the tunnel! I wrap Sam's data in encryption (ESP) and send it through. To the outside world, it looks like gibberish flowing between two endpoints. But inside the tunnel, the data is perfectly intact.",visual:"Iris builds a glowing tunnel from NY to London. Sam's data enters as readable text, gets wrapped in a glowing encryption shell, travels through the tunnel, and exits in London as readable text again."},
+      {speaker:"👹 Hacker Hank",dialogue:"I intercepted their traffic! Let me read it... what?! It's all encrypted gibberish! I can see that data is flowing, but I can't read a single byte. This Diffie-Hellman math is impossible to reverse. I give up!",visual:"Hank catches a packet mid-tunnel. He opens it — it's full of scrambled characters. He tries to decode it, fails, and throws it down in frustration. The encryption is too strong."},
+    ]
+  },
+  "BGP": {
+    setting:"A United Nations-style diplomatic summit",
+    chars:[{emoji:"🤵",name:"BGP Barbara",role:"Chief Diplomat"},{emoji:"🏛️",name:"AS-100 Aldo",role:"Country A"},{emoji:"🏛️",name:"AS-200 Zara",role:"Country B"},{emoji:"📊",name:"Path Pam",role:"Policy Advisor"}],
+    scenes:[
+      {speaker:"🤵 BGP Barbara",dialogue:"I am BGP — Border Gateway Protocol. I am the protocol that makes the internet work. Without me, networks couldn't talk to each other. I don't care about the fastest path — I care about POLICY. Who is allowed to talk to whom? What paths are preferred? I am diplomacy.",visual:"Barbara stands at a podium in a grand hall. Behind her, a world map with autonomous systems (AS) connected by lines. She wears a diplomat's suit."},
+      {speaker:"🏛️ AS-100 Aldo",dialogue:"I represent Autonomous System 100. I can reach networks 10.0.0.0/8 and 172.16.0.0/12. I'm offering Barbara a path through my AS to reach those destinations.",visual:"Aldo stands at his country's podium. He holds a sign showing his reachable networks. A path line extends from Barbara to Aldo to the destinations."},
+      {speaker:"🏛️ AS-200 Zara",dialogue:"I represent AS 200. I can also reach 10.0.0.0/8, but through a different path — shorter AS_PATH. I'm offering Barbara a better route!",visual:"Zara stands at her podium. She also holds a sign for 10.0.0.0/8 but with a shorter path. A competing line appears — shorter and faster."},
+      {speaker:"📊 Path Pam",dialogue:"Barbara, let me evaluate. AS_PATH: Zara's is shorter (2 hops vs Aldo's 3). Local Preference: both equal. Origin: both IGP. MED: not set. Winner: Zara's path! But Barbara, remember — you can override this with policy. You always have the final say.",visual:"Pam shows a scoreboard comparing the paths. Zara's path lights up green (winner). But Barbara holds a gavel — she can override any decision with policy. She is the ultimate authority."},
+    ]
+  },
+  "Exam": {
+    setting:"A graduation ceremony",
+    chars:[{emoji:"🎓",name:"Student Nisaar",role:"The Graduate"},{emoji:"🧙‍♂️",name:"Professor Kevin",role:"The Mentor"}],
+    scenes:[
+      {speaker:"🎓 Student Nisaar",dialogue:"I can't believe I made it. From knowing nothing about networking to understanding OSI layers, subnetting, VLANs, routing, security, and automation. I've grown so much!",visual:"Nisaar stands in a cap and gown. Flashbacks show his journey — struggling with binary, mastering subnetting, configuring switches. A montage of learning moments."},
+      {speaker:"🧙‍♂️ Professor Kevin",dialogue:"You've earned this. Every late night, every practice lab, every failed attempt that taught you something new — it all led here. The exam is just a formality. You already know the material. Go in with confidence!",visual:"Kevin places a hand on Nisaar's shoulder. He hands him a certificate. The classroom is empty behind them — the journey is complete. Nisaar walks forward with confidence toward the exam door."},
+      {speaker:"🎓 Student Nisaar",dialogue:"Thank you, Professor. I'm ready. Let's do this!",visual:"Nisaar opens the exam door. Bright light pours out. He walks through. The screen fades to black. Text appears: 'The end of the beginning. Your networking career starts now.'"},
+    ]
+  },
+};
+
+function getLessonDrama(lessonText){
+  // Try to match lesson text to a pre-written drama
+  const lower = lessonText.toLowerCase();
+  for(const [key, drama] of Object.entries(lessonDramas)){
+    if(lower.includes(key.toLowerCase())){
+      return drama;
+    }
+  }
+  // Fallback: generate a generic drama
+  return {
+    setting:"A networking classroom",
+    chars:[{emoji:"🧙‍♂️",name:"Professor Kevin",role:"The Mentor"},{emoji:"🎓",name:"Student Nisaar",role:"The Learner"}],
+    scenes:[
+      {speaker:"🧙‍♂️ Professor Kevin",dialogue:`Today we're learning about ${lessonText.replace(/^[🔴🟡🟢]+\s*Lesson\s*\d+\/\d+:\s*/,'')}. This is a critical topic in networking that connects to everything we've learned so far.`,visual:"Professor Kevin stands at the front of the classroom. A diagram appears behind him showing the topic. Student Nisaar takes notes eagerly."},
+      {speaker:"🎓 Student Nisaar",dialogue:"I'm starting to see how all these concepts connect together. Each lesson builds on the previous one. The pieces are coming together!",visual:"Nisaar smiles with understanding. A puzzle animation shows pieces clicking together. The big picture of networking is forming."},
+      {speaker:"🧙‍♂️ Professor Kevin",dialogue:"Exactly! Networking is like a puzzle — each piece matters. Master this topic, and you're one step closer to becoming a networking professional. Keep going!",visual:"Kevin nods approvingly. The classroom transforms into a real-world network operations center — Nisaar's future workplace. The journey continues."},
+    ]
+  };
+}
+
 function openAnimationStudio(lessonText, courseName){
   animStudioLesson = lessonText;
-  // Detect topic from lesson text
-  const lowerText = lessonText.toLowerCase();
-  if(lowerText.includes('osi') || lowerText.includes('layer')) animStudioTopic = 'osi';
-  else if(lowerText.includes('subnet')) animStudioTopic = 'subnetting';
-  else if(lowerText.includes('vlan') || lowerText.includes('trunk')) animStudioTopic = 'vlan';
-  else if(lowerText.includes('spanning tree') || lowerText.includes('stp')) animStudioTopic = 'stp';
-  else if(lowerText.includes('ospf')) animStudioTopic = 'ospf';
-  else if(lowerText.includes('nat')) animStudioTopic = 'nat';
-  else if(lowerText.includes('acl') || lowerText.includes('access control')) animStudioTopic = 'acl';
-  else if(lowerText.includes('dhcp')) animStudioTopic = 'dhcp';
-  else if(lowerText.includes('bgp')) animStudioTopic = 'bgp';
-  else if(lowerText.includes('ipv6')) animStudioTopic = 'ipv6';
-  else if(lowerText.includes('vpn') || lowerText.includes('ipsec')) animStudioTopic = 'vpn';
-  else if(lowerText.includes('firewall') || lowerText.includes('security')) animStudioTopic = 'firewall';
-  else if(lowerText.includes('python') || lowerText.includes('automation')) animStudioTopic = 'automation';
-  else if(lowerText.includes('wireless') || lowerText.includes('wi-fi')) animStudioTopic = 'wifi';
-  else animStudioTopic = 'osi';
+  const cleanLesson = lessonText.replace(/^[🔴🟡🟢]+\s*Lesson\s*\d+\/\d+:\s*/,'').trim();
 
-  // Load characters for detected topic
-  const charData = topicCharacterMap[animStudioTopic] || topicCharacterMap.osi;
-  animStudioChars = [...charData.chars];
+  // Get pre-written drama for this lesson
+  const drama = getLessonDrama(cleanLesson);
+  animStudioChars = [...drama.chars];
+
+  // Detect topic for the topic label
+  const lowerText = lessonText.toLowerCase();
+  let topicLabel = 'General';
+  if(lowerText.includes('osi') || lowerText.includes('layer')) topicLabel = 'OSI Model';
+  else if(lowerText.includes('subnet')) topicLabel = 'Subnetting';
+  else if(lowerText.includes('vlan') || lowerText.includes('trunk')) topicLabel = 'VLANs';
+  else if(lowerText.includes('spanning tree') || lowerText.includes('stp')) topicLabel = 'STP';
+  else if(lowerText.includes('ospf')) topicLabel = 'OSPF';
+  else if(lowerText.includes('nat')) topicLabel = 'NAT';
+  else if(lowerText.includes('acl') || lowerText.includes('access control')) topicLabel = 'ACLs';
+  else if(lowerText.includes('dhcp')) topicLabel = 'DHCP';
+  else if(lowerText.includes('bgp')) topicLabel = 'BGP';
+  else if(lowerText.includes('ipv6')) topicLabel = 'IPv6';
+  else if(lowerText.includes('vpn') || lowerText.includes('ipsec')) topicLabel = 'VPN';
+  else if(lowerText.includes('firewall') || lowerText.includes('security') || lowerText.includes('threat')) topicLabel = 'Security';
+  else if(lowerText.includes('python') || lowerText.includes('automation') || lowerText.includes('sdn') || lowerText.includes('config')) topicLabel = 'Automation';
+  else if(lowerText.includes('wireless') || lowerText.includes('wi-fi') || lowerText.includes('wlan')) topicLabel = 'Wireless';
+  else if(lowerText.includes('routing') || lowerText.includes('static') || lowerText.includes('ospf')) topicLabel = 'Routing';
+  else if(lowerText.includes('switch') || lowerText.includes('ethernet')) topicLabel = 'Switching';
+  else if(lowerText.includes('cabling') || lowerText.includes('cable') || lowerText.includes('fiber')) topicLabel = 'Cabling';
+  else if(lowerText.includes('binary') || lowerText.includes('ipv4')) topicLabel = 'IP Addressing';
+  else if(lowerText.includes('exam')) topicLabel = 'Exam Prep';
 
   // Update modal
-  document.getElementById('animModalLesson').innerHTML = `<strong>Lesson:</strong> ${lessonText}<br><strong>Course:</strong> ${courseName}<br><strong>Detected Topic:</strong> ${animStudioTopic.toUpperCase()}`;
+  document.getElementById('animModalLesson').innerHTML = `<strong>Lesson:</strong> ${cleanLesson}<br><strong>Course:</strong> ${courseName}<br><strong>Topic:</strong> ${topicLabel}`;
   renderModalChars();
+
+  // Auto-generate the animation script immediately — no transcript needed!
   document.getElementById('animModalTranscript').value = '';
   document.getElementById('animModalOutput').style.display = 'none';
   document.getElementById('animModal').style.display = 'block';
   document.body.style.overflow = 'hidden';
+
+  // Auto-generate after a short delay
+  setTimeout(() => autoGenerateDrama(drama, cleanLesson, courseName, topicLabel), 300);
+}
+
+function autoGenerateDrama(drama, lessonText, courseName, topicLabel){
+  const output = document.getElementById('animModalOutput');
+  const scenes = drama.scenes;
+
+  output.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h4 style="color:var(--accent);font-size:.95rem">🎭 Auto-Generated Animation Script</h4>
+        <div style="display:flex;gap:8px">
+          <button class="flow-btn" onclick="copyModalScript()">📋 Copy for Google Flow</button>
+          <button class="flow-btn" onclick="downloadModalScript()">💾 Download</button>
+        </div>
+      </div>
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px">
+        <strong style="color:var(--accent)">Setting:</strong> ${drama.setting} · 
+        <strong style="color:var(--accent)">Characters:</strong> ${drama.chars.length} · 
+        <strong style="color:var(--accent)">Scenes:</strong> ${scenes.length}
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);padding:8px 12px;background:rgba(34,197,94,.05);border-radius:6px;border:1px solid rgba(34,197,94,.15);margin-top:8px">
+        ✅ <strong style="color:#4ade80">Ready to use!</strong> No transcript needed. Copy this script and paste it into Google Flow to create your animation video.
+      </div>
+    </div>
+    ${scenes.map(s => `
+      <div class="anim-scene">
+        <div class="anim-scene-header">
+          <div class="anim-scene-num">${scenes.indexOf(s)+1}</div>
+          <div class="anim-scene-title">Scene ${scenes.indexOf(s)+1}</div>
+        </div>
+        <div class="anim-scene-setting">📍 ${drama.setting}</div>
+        <div class="anim-dialogue">
+          <div class="speaker">${s.speaker}</div>
+          <div class="line">"${s.dialogue}"</div>
+        </div>
+        <div class="anim-visual">🎬 <strong>Visual:</strong> ${s.visual}</div>
+      </div>
+    `).join('')}
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px">
+      <h4 style="color:var(--accent);margin-bottom:8px;font-size:.9rem">📋 Google Flow Instructions</h4>
+      <ol style="font-size:.82rem;color:var(--muted);line-height:1.8;padding-left:20px">
+        <li>Open <strong style="color:var(--text)">Google Flow</strong> and create a new project</li>
+        <li>Set the scene: <strong style="color:var(--text)">${drama.setting}</strong></li>
+        <li>Add characters: ${drama.chars.map(c => `${c.emoji} ${c.name}`).join(', ')}</li>
+        <li>For each scene, add the character and paste the dialogue as voiceover text</li>
+        <li>Use the visual directions to set up animations and camera angles</li>
+        <li>Export as MP4 and share with your study group!</li>
+      </ol>
+    </div>
+  `;
+  output.style.display = 'block';
 }
 
 function closeAnimModal(){
