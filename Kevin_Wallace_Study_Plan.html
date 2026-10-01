@@ -1525,7 +1525,7 @@ function renderPlanner(){
             const taskId = `${d.day}-${t.text}`;
             const isDone = plannerProgress[taskId];
             const linkHtml = t.url && t.url !== '#' ? `<a href="${t.url}" target="_blank" style="font-size:.68rem;color:var(--accent);text-decoration:none;margin-left:6px;padding:1px 6px;border-radius:4px;background:rgba(79,156,255,.1);border:1px solid rgba(79,156,255,.2)">Open ↗</a>` : '';
-            const animBtn = t.tag === 'new' ? `<button onclick="openAnimationStudio('${t.text.replace(/'/g,"\\'")}','${t.course.replace(/'/g,"\\'")}')" style="font-size:.68rem;color:#fbbf24;text-decoration:none;margin-left:4px;padding:1px 6px;border-radius:4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);cursor:pointer">🎬 Animate</button>` : '';
+            const animBtn = (t.tag === 'new' || t.tag === 'review') ? `<button onclick="openAnimationStudio('${t.text.replace(/'/g,"\\'")}','${t.course.replace(/'/g,"\\'")}')" style="font-size:.68rem;color:#fbbf24;text-decoration:none;margin-left:4px;padding:1px 6px;border-radius:4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);cursor:pointer">🎬 Animate</button>` : '';
             return `
               <label class="planner-task ${isDone ? 'done' : ''}" style="cursor:pointer">
                 <input type="checkbox" ${isDone ? 'checked' : ''} onchange="togglePlannerTask('${d.day}',\`${t.text.replace(/`/g,'')}\`)">
@@ -2551,8 +2551,14 @@ ${scenes.map((s, i) => `[CLIP ${i+1}] ${s.speaker} | ${drama.setting} | ${s.visu
       const charName = s.speaker.replace(/^[^\s]+\s/, '').trim();
       const charEmoji = s.speaker.split(' ')[0];
       const prevClip = i > 0 ? `Continues from Clip ${i}. ` : 'Opening shot. ';
-      const charPrompt = `Create character: ${charEmoji} ${charName}. ${drama.setting}. Consistent design: same face, outfit, colors in all clips. Style: animated educational video.`;
-      const scenePrompt = `${charEmoji} ${charName} in ${drama.setting}. ${s.visual} Character must look identical to previous clips. 10 seconds. ${prevClip}Voiceover: "${s.dialogue}"`;
+      const allCharNames = drama.chars.map(c => `${c.emoji} ${c.name}`).join(', ');
+
+      // Per-character prompts for THIS scene's speaker
+      const charPrompt = `CHARACTER DESIGN — ${charEmoji} ${charName}\nRole: ${drama.chars.find(c => c.name === charName)?.role || 'Character'}\nSetting: ${drama.setting}\nArt style: Professional animated educational video, clean modern design, consistent character sheet.\nRequirements: Same face, same outfit, same color palette across ALL clips. This character must be instantly recognizable in every scene.\nPersonality: ${drama.chars.find(c => c.name === charName)?.role || 'Network professional'}`;
+
+      // Professional scene prompt referencing the character
+      const scenePrompt = `SCENE ${i+1} of ${scenes.length} — 10 seconds — ${i === 0 ? 'OPENING SHOT' : 'CONTINUES FROM CLIP ' + i}\n\nSetting: ${drama.setting}\nActive Character: ${charEmoji} ${charName}\nAll Characters in Scene: ${allCharNames}\n\nVisual Direction: ${s.visual}\n\nContinuity: ${i === 0 ? 'This is the first clip — establish the setting and introduce the character.' : `This clip continues directly from Clip ${i}. Maintain identical character designs, background, and lighting. The character ${charName} should be in the same position where they were last seen.`}\n\nVoiceover Dialogue: "${s.dialogue}"\n\nStyle: Professional educational animation. Clean backgrounds. Character-consistent design. 10-second duration. Smooth transitions.`;
+
       return `
       <div class="anim-scene" id="clip-${i+1}">
         <div class="anim-scene-header">
@@ -2566,25 +2572,25 @@ ${scenes.map((s, i) => `[CLIP ${i+1}] ${s.speaker} | ${drama.setting} | ${s.visu
         </div>
         <div class="anim-visual">🎬 <strong>Visual:</strong> ${s.visual}</div>
 
-        <!-- Character Prompt -->
+        <!-- Character Prompt for this scene's speaker -->
         <div style="margin-top:10px;padding:12px 14px;background:rgba(168,85,247,.05);border-radius:8px;border:1px solid rgba(168,85,247,.15)">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-size:.72rem;color:#c084fc;font-weight:600">🎨 CHARACTER PROMPT — generate this first to create the character:</div>
-            <button class="flow-btn" onclick="copyTextById('char-prompt-${i+1}')" style="font-size:.68rem;border-color:rgba(168,85,247,.3);color:#c084fc">📋 Copy</button>
+            <div style="font-size:.72rem;color:#c084fc;font-weight:600">🎨 STEP 1 — CHARACTER PROMPT for ${charEmoji} ${charName} (copy & generate character first):</div>
+            <button class="flow-btn" onclick="copyTextById('char-prompt-${i+1}')" style="font-size:.68rem;border-color:rgba(168,85,247,.3);color:#c084fc">📋 Copy Character Prompt</button>
           </div>
-          <div style="font-size:.78rem;color:var(--text);font-family:monospace;line-height:1.6;background:var(--card);padding:10px 14px;border-radius:6px;border:1px solid var(--border)" id="char-prompt-${i+1}">${charPrompt}</div>
+          <div style="font-size:.76rem;color:var(--text);font-family:monospace;line-height:1.6;background:var(--card);padding:10px 14px;border-radius:6px;border:1px solid var(--border);white-space:pre-wrap" id="char-prompt-${i+1}">${charPrompt}</div>
         </div>
 
         <!-- Scene Prompt -->
         <div style="margin-top:8px;padding:12px 14px;background:rgba(79,156,255,.05);border-radius:8px;border:1px solid rgba(79,156,255,.15)">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-size:.72rem;color:var(--accent);font-weight:600">🎬 SCENE PROMPT — paste this after character is generated:</div>
-            <button class="flow-btn" onclick="copyTextById('scene-prompt-${i+1}')" style="font-size:.68rem">📋 Copy</button>
+            <div style="font-size:.72rem;color:var(--accent);font-weight:600">🎬 STEP 2 — SCENE PROMPT (copy & generate scene after character is ready):</div>
+            <button class="flow-btn" onclick="copyTextById('scene-prompt-${i+1}')" style="font-size:.68rem">📋 Copy Scene Prompt</button>
           </div>
-          <div style="font-size:.78rem;color:var(--text);font-family:monospace;line-height:1.6;background:var(--card);padding:10px 14px;border-radius:6px;border:1px solid var(--border)" id="scene-prompt-${i+1}">${scenePrompt}</div>
+          <div style="font-size:.76rem;color:var(--text);font-family:monospace;line-height:1.6;background:var(--card);padding:10px 14px;border-radius:6px;border:1px solid var(--border);white-space:pre-wrap" id="scene-prompt-${i+1}">${scenePrompt}</div>
         </div>
 
-        ${i < scenes.length - 1 ? `<div style="font-size:.72rem;color:var(--muted);margin-top:8px;padding:4px 10px;background:rgba(79,156,255,.05);border-radius:4px">➡️ <strong>End state:</strong> Position characters for seamless transition into Clip ${i+2}</div>` : `<div style="font-size:.72rem;color:var(--muted);margin-top:8px;padding:4px 10px;background:rgba(34,197,94,.05);border-radius:4px">🏁 <strong>Final clip:</strong> End with satisfying conclusion — fade to black or summary card</div>`}
+        ${i < scenes.length - 1 ? `<div style="font-size:.72rem;color:var(--muted);margin-top:8px;padding:4px 10px;background:rgba(79,156,255,.05);border-radius:4px">➡️ <strong>End state:</strong> Position ${charName} for seamless transition into Clip ${i+2}. Keep all visual elements consistent.</div>` : `<div style="font-size:.72rem;color:var(--muted);margin-top:8px;padding:4px 10px;background:rgba(34,197,94,.05);border-radius:4px">🏁 <strong>Final clip:</strong> End with satisfying conclusion — fade to black or show summary card with key takeaway.</div>`}
       </div>`;
     }).join('')}
 
