@@ -195,7 +195,7 @@
       <span class="badge">👨‍🏫 <strong>CCIEx2 Lifetime Emeritus #7945</strong></span>
       <span class="badge">📅 <strong>Oct 1 → Dec 31, 2026</strong></span>
       <span class="badge">🎥 <strong>80h 41m</strong> of content</span>
-      <span class="badge">🎯 <strong>15 courses</strong></span>
+      <span class="badge">🎯 <strong>14 courses</strong></span>
       <span class="badge">⏱️ <strong>~1.5 hrs/day</strong></span>
     </div>
   </div>
@@ -208,7 +208,7 @@
       <div class="overall-bar-wrap"><div class="overall-bar" id="overallBar"></div></div>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="num">15</div><div class="label">Courses</div></div>
+      <div class="stat-card"><div class="num">14</div><div class="label">Courses</div></div>
       <div class="stat-card"><div class="num">90h+</div><div class="label">Video Content</div></div>
       <div class="stat-card"><div class="num">91</div><div class="label">Days</div></div>
       <div class="stat-card"><div class="num">~1.5h</div><div class="label">Daily Goal</div></div>
@@ -404,7 +404,6 @@ const courses = [
   {n:12, title:"Wireless Networking Essential Training", dur:"1h 19m", level:"Intermediate", rating:4.7, reviews:"1,450", imp:5, priority:"medium", url:"https://www.linkedin.com/learning/wireless-networking-essential-training"},
   {n:13, title:"CCNA Cybersecurity (200-201) v1.2 Cert Prep", dur:"5h 52m", level:"Intermediate", rating:4.5, reviews:"21", imp:8, priority:"high", url:"https://www.linkedin.com/learning/ccna-cybersecurity-200-201-v1-2-cert-prep"},
   {n:14, title:"Learning IP Addressing", dur:"40m", level:"Beginner", rating:4.8, reviews:"1,122", imp:5, priority:"medium", url:"https://www.linkedin.com/learning/learning-ip-addressing-2"},
-  {n:15, title:"Practice Exam for CCNA v1.1 (200-301)", dur:"4m", level:"Intermediate", rating:5.0, reviews:"2", imp:3, priority:"low", url:"https://www.linkedin.com/learning/practice-exam-4-for-cisco-certified-network-associate-ccna-v1-1-200-301"},
 ].map(c => ({...c, durMin:durToMin(c.dur), priorityRank:priorityRank[c.priority]}));
 
 // ─── SORTING ────────────────────────────────────────────
@@ -663,7 +662,6 @@ const courseSections = {
   12: ["Introduction","1. Wireless LAN Designs","2. Selecting Wi-Fi Channels","3. Service Sets","4. Wi-Fi Radio Technologies","5. Wi-Fi Standards","6. Wireless Security","7. Installing an Autonomous AP","8. Installing a Lightweight AP","Conclusion"],
   13: ["Welcome to the Course!","1. Foundations of Digital Defense","2. Threat Detection and Surveillance","3. Endpoint Protection and Analysis","4. Network Traffic Analysis and Interpretation","5. Cybersecurity Governance and Best Practices","6. Exam Preparation","Conclusion"],
   14: ["Introduction","1. Learning IP Addressing","Conclusion"],
-  15: ["1. Practice Exam for CCNA v1.1 (200-301)"],
 };
 
 function classifySection(title){
@@ -929,13 +927,6 @@ const movieCast = {
       {lesson:"Introduction",char:{name:"Binary Bob",emoji:"🕵️"},role:"Detective",dialogue:"I'm Binary Bob, back with a quick case! IP addressing fundamentals in 40 minutes. No math — just concepts!"},
       {lesson:"1. Learning IP Addressing",char:{name:"Address Ava",emoji:"📍"},role:"Analyst",dialogue:"IPv4, IPv6, static vs dynamic, DNS — I'm Address Ava! The non-mathematical guide to IP addressing. Let's keep it simple!"},
       {lesson:"Conclusion",char:{name:"Binary Bob",emoji:"🕵️"},role:"Detective",dialogue:"Quick case closed! You understand IP addresses — their purpose, format, and assignment. Onward to subnetting!"},
-    ]
-  },
-  15: {
-    movie:"The Final Test", genre:"📝 Climax",
-    mainChar:{name:"Exam Expert",emoji:"📝",role:"The Examiner — testing everything you've learned across all courses"},
-    cast:[
-      {lesson:"1. Practice Exam for CCNA v1.1 (200-301)",char:{name:"Exam Expert",emoji:"📝"},role:"Examiner",dialogue:"This is it — the practice exam! Timed, untimed, or custom mode. Test everything you've learned. Are you ready?"},
     ]
   },
 };
