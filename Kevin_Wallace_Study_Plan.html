@@ -1024,18 +1024,22 @@ const plannerData = (() => {
   const startDate = new Date(2026, 9, 1); // Oct 1, 2026
   const totalDays = 91;
   
-  // Course schedule: which course for which day range
+  // Course schedule: which course for which day range — ordered for optimal learning
   const courseSchedule = [
-    {start:1, end:7, course:1, title:"Networking Foundations: Networking Basics"},
-    {start:8, end:14, course:2, title:"Cisco Networking Foundations: Fundamentals"},
-    {start:15, end:21, course:3, title:"Cisco Networking Foundations: IP Addressing"},
-    {start:22, end:28, course:4, title:"Cisco Networking Foundations: Switching & Routing"},
-    {start:29, end:31, course:5, title:"Cisco Networking Foundations: Wireless/Services/Security"},
-    {start:32, end:41, course:6, title:"CCST Networking (100-150) Cert Prep"},
-    {start:42, end:61, course:7, title:"CCNA v1.1 (200-301) Cert Prep"},
-    {start:62, end:75, course:8, title:"CCNP ENCOR v1.2 (350-401) Cert Prep"},
-    {start:76, end:85, course:9, title:"CCNP ENARSI (300-410) Cert Prep"},
-    {start:86, end:91, course:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep"},
+    {start:1, end:2, course:14, title:"Learning IP Addressing"},
+    {start:3, end:4, course:11, title:"Learning Subnetting"},
+    {start:5, end:6, course:1, title:"Networking Foundations: Networking Basics"},
+    {start:7, end:9, course:2, title:"Cisco Networking Foundations: Fundamentals"},
+    {start:10, end:11, course:3, title:"Cisco Networking Foundations: IP Addressing"},
+    {start:12, end:13, course:4, title:"Cisco Networking Foundations: Switching & Routing"},
+    {start:14, end:16, course:5, title:"Cisco Networking Foundations: Wireless/Services/Security"},
+    {start:17, end:18, course:12, title:"Wireless Networking Essential Training"},
+    {start:19, end:28, course:6, title:"CCST Networking (100-150) Cert Prep"},
+    {start:29, end:48, course:7, title:"CCNA v1.1 (200-301) Cert Prep"},
+    {start:49, end:55, course:13, title:"CCNA Cybersecurity (200-201) v1.2 Cert Prep"},
+    {start:56, end:70, course:8, title:"CCNP ENCOR v1.2 (350-401) Cert Prep"},
+    {start:71, end:82, course:9, title:"CCNP ENARSI (300-410) Cert Prep"},
+    {start:83, end:91, course:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep"},
   ];
 
   // Spaced repetition intervals: review on Day+1, Day+3, Day+7, Day+14, Day+30
@@ -1076,8 +1080,8 @@ const plannerData = (() => {
       const sectionIdx = Math.min(dayInCourse - 1, sections.length - 1);
       const topic = sections[sectionIdx] || `Section ${dayInCourse}`;
       
-      tasks.push({type:"new", tag:"new", text:`🎬 Watch: ${topic}`, course:cs.title, courseNum:cs.course, sectionIdx});
-      tasks.push({type:"practice", tag:"practice", text:`✍️ Take notes + practice exercises for: ${topic}`, course:cs.title});
+      tasks.push({type:"new", tag:"new", text:`🎬 Watch: ${topic}`, course:cs.title, courseNum:cs.course, sectionIdx, url:courses.find(c=>c.n===cs.course)?.url || "#"});
+      tasks.push({type:"practice", tag:"practice", text:`✍️ Take notes + practice exercises for: ${topic}`, course:cs.title, url:courses.find(c=>c.n===cs.course)?.url || "#"});
       
       // Record this topic for spaced repetition
       learnedTopics.push({day:d, course:cs.course, title:cs.title, topic});
@@ -1221,11 +1225,12 @@ function renderPlanner(){
           ${tasks.map(t => {
             const taskId = `${d.day}-${t.text}`;
             const isDone = plannerProgress[taskId];
+            const linkHtml = t.url && t.url !== '#' ? `<a href="${t.url}" target="_blank" style="font-size:.68rem;color:var(--accent);text-decoration:none;margin-left:6px;padding:1px 6px;border-radius:4px;background:rgba(79,156,255,.1);border:1px solid rgba(79,156,255,.2)">Open ↗</a>` : '';
             return `
               <label class="planner-task ${isDone ? 'done' : ''}" style="cursor:pointer">
                 <input type="checkbox" ${isDone ? 'checked' : ''} onchange="togglePlannerTask('${d.day}',\`${t.text.replace(/`/g,'')}\`)">
                 <span class="ptag ptag-${t.tag}">${tagLabel[t.tag]||t.tag}</span>
-                <span class="ptext">${t.text}<span class="pcourse">${t.course}</span></span>
+                <span class="ptext">${t.text}${linkHtml}<span class="pcourse">${t.course}</span></span>
               </label>`;
           }).join('')}
         </div>
