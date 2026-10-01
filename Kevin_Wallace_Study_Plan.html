@@ -124,6 +124,35 @@
   .flow-btn{padding:6px 16px;border-radius:8px;font-size:.82rem;cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--text)}
   .flow-btn:hover{border-color:var(--accent);color:var(--accent)}
 
+  /* Daily Planner */
+  .planner-day{background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+  .planner-day-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;user-select:none}
+  .planner-day-header:hover{background:rgba(79,156,255,.05)}
+  .planner-day-header .pdate{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px}
+  .planner-day-header .pmeta{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .planner-day-header .pbar{width:80px;height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+  .planner-day-header .pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .3s}
+  .planner-day-body{padding:12px 16px;border-top:1px solid var(--border);display:none}
+  .planner-day.open .planner-day-body{display:block}
+  .planner-day.open .planner-arrow{transform:rotate(90deg)}
+  .planner-arrow{font-size:1rem;transition:transform .3s;color:var(--muted)}
+  .planner-task{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(45,49,72,.5);font-size:.88rem}
+  .planner-task:last-child{border-bottom:none}
+  .planner-task input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent2);cursor:pointer;margin-top:2px;flex-shrink:0}
+  .planner-task.done .ptext{text-decoration:line-through;color:var(--muted)}
+  .planner-task .ptag{font-size:.68rem;padding:2px 8px;border-radius:6px;font-weight:600;flex-shrink:0}
+  .ptag-new{background:rgba(79,156,255,.15);color:var(--accent)}
+  .ptag-review{background:rgba(245,158,11,.15);color:#fbbf24}
+  .ptag-practice{background:rgba(34,197,94,.15);color:#4ade80}
+  .ptag-rest{background:rgba(156,163,175,.15);color:#9ca3af}
+  .planner-task .ptext{flex:1;line-height:1.5}
+  .planner-task .pcourse{font-size:.72rem;color:var(--muted);display:block;margin-top:2px}
+  .planner-today{border-color:var(--accent);box-shadow:0 0 10px rgba(79,156,255,.1)}
+  .planner-today .planner-day-header{background:rgba(79,156,255,.05)}
+  .pstat-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+  .pstat-card .pnum{font-size:1.5rem;font-weight:800;color:var(--accent)}
+  .pstat-card .plabel{font-size:.72rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+
   /* Path diagram */
   .path-diagram{text-align:center;padding:10px 0}
   .path-node{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 24px;margin:6px;font-size:.85rem}
@@ -244,6 +273,57 @@
   <div class="section">
     <h2><span class="icon">🗓️</span> Weekly Study Schedule</h2>
     <div id="schedule"></div>
+  </div>
+
+  <!-- DAILY PLANNER WITH SPACED REPETITION -->
+  <div class="section">
+    <h2><span class="icon">📅</span> Daily Planner + Spaced Repetition</h2>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Your day-by-day planner with built-in spaced repetition. New topics are introduced, then reviewed at increasing intervals (Day 1 → Day 3 → Day 7 → Day 14 → Day 30). Check off tasks as you complete them — your progress saves automatically!</p>
+
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="flow-btn" onclick="setPlannerView('today')">📍 Today Only</button>
+      <button class="flow-btn" onclick="setPlannerView('week')">📆 This Week</button>
+      <button class="flow-btn" onclick="setPlannerView('all')">📋 All Days</button>
+      <button class="flow-btn" onclick="resetPlanner()" style="border-color:rgba(239,68,68,.3);color:#f87171">🔄 Reset Progress</button>
+    </div>
+
+    <div id="plannerStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px"></div>
+    <div id="planner"></div>
+  </div>
+
+  <!-- SPACED REPETITION EXPLAINER -->
+  <div class="section">
+    <h2><span class="icon">🧠</span> How Spaced Repetition Works</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px">
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">📅</div>
+        <strong style="color:var(--accent)">Day 1</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Learn new topic + first review</p>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">🔁</div>
+        <strong style="color:var(--accent)">Day 3</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">First spaced review (72h later)</p>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">🔄</div>
+        <strong style="color:var(--accent)">Day 7</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Second review (1 week later)</p>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">♻️</div>
+        <strong style="color:var(--accent)">Day 14</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Third review (2 weeks later)</p>
+      </div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8rem;margin-bottom:6px">💎</div>
+        <strong style="color:var(--accent)">Day 30</strong>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:4px">Final review (mastered!)</p>
+      </div>
+    </div>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:.85rem;color:var(--muted)">
+      <strong style="color:var(--text)">Why it works:</strong> Spaced repetition forces your brain to recall information just as you're about to forget it. This strengthens neural pathways and moves knowledge from short-term to long-term memory. Studies show it improves retention by <strong style="color:var(--accent)">200-300%</strong> compared to cramming.
+    </div>
   </div>
 
   <!-- DAILY GOALS -->
@@ -946,6 +1026,249 @@ function toggleAllFlows(open){
   });
 }
 
+// ─── DAILY PLANNER WITH SPACED REPETITION ──────────────
+// Generates a 91-day plan (Oct 1 - Dec 31) with spaced repetition reviews
+const plannerData = (() => {
+  const days = [];
+  const startDate = new Date(2026, 9, 1); // Oct 1, 2026
+  const totalDays = 91;
+  
+  // Course schedule: which course for which day range
+  const courseSchedule = [
+    {start:1, end:7, course:1, title:"Networking Foundations: Networking Basics"},
+    {start:8, end:14, course:2, title:"Cisco Networking Foundations: Fundamentals"},
+    {start:15, end:21, course:3, title:"Cisco Networking Foundations: IP Addressing"},
+    {start:22, end:28, course:4, title:"Cisco Networking Foundations: Switching & Routing"},
+    {start:29, end:31, course:5, title:"Cisco Networking Foundations: Wireless/Services/Security"},
+    {start:32, end:41, course:6, title:"CCST Networking (100-150) Cert Prep"},
+    {start:42, end:61, course:7, title:"CCNA v1.1 (200-301) Cert Prep"},
+    {start:62, end:75, course:8, title:"CCNP ENCOR v1.2 (350-401) Cert Prep"},
+    {start:76, end:85, course:9, title:"CCNP ENARSI (300-410) Cert Prep"},
+    {start:86, end:91, course:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep"},
+  ];
+
+  // Spaced repetition intervals: review on Day+1, Day+3, Day+7, Day+14, Day+30
+  const srIntervals = [1, 3, 7, 14, 30];
+  
+  // Track what was learned each day for spaced repetition
+  const learnedTopics = []; // {day, course, topic}
+
+  for (let d = 1; d <= totalDays; d++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + d - 1);
+    const dayOfWeek = date.getDay(); // 0=Sun, 6=Sat
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const isRestDay = dayOfWeek === 0; // Sunday = rest/review day
+    
+    const tasks = [];
+    
+    // Find current course
+    const cs = courseSchedule.find(c => d >= c.start && d <= c.end);
+    
+    if (isRestDay && d > 1) {
+      // Sunday = light review day
+      tasks.push({type:"rest", tag:"rest", text:"🌿 Rest Day — Light review of notes, no new content", course:"Recovery"});
+      // Add spaced reviews that fall on this day
+      const reviews = learnedTopics.filter(t => {
+        for (const interval of srIntervals) {
+          if (t.day + interval === d) return true;
+        }
+        return false;
+      });
+      reviews.forEach(r => {
+        tasks.push({type:"review", tag:"review", text:`📖 Review: ${r.topic}`, course:r.title});
+      });
+    } else if (cs) {
+      // New content day
+      const dayInCourse = d - cs.start + 1;
+      const sections = courseSections[cs.course] || [];
+      const sectionIdx = Math.min(dayInCourse - 1, sections.length - 1);
+      const topic = sections[sectionIdx] || `Section ${dayInCourse}`;
+      
+      tasks.push({type:"new", tag:"new", text:`🎬 Watch: ${topic}`, course:cs.title, courseNum:cs.course, sectionIdx});
+      tasks.push({type:"practice", tag:"practice", text:`✍️ Take notes + practice exercises for: ${topic}`, course:cs.title});
+      
+      // Record this topic for spaced repetition
+      learnedTopics.push({day:d, course:cs.course, title:cs.title, topic});
+    }
+    
+    // Add spaced repetition reviews for today
+    const reviews = learnedTopics.filter(t => {
+      if (t.day === d) return false; // Don't review what you just learned
+      for (const interval of srIntervals) {
+        if (t.day + interval === d) return true;
+      }
+      return false;
+    });
+    reviews.forEach(r => {
+      const interval = srIntervals.find(i => r.day + i === d);
+      const reviewLabel = interval === 1 ? "Quick Review (next day)" : 
+                          interval === 3 ? "Review (3 days)" :
+                          interval === 7 ? "Review (1 week)" :
+                          interval === 14 ? "Review (2 weeks)" : "Final Review (30 days)";
+      tasks.push({type:"review", tag:"review", text:`🔁 ${reviewLabel}: ${r.topic}`, course:r.title});
+    });
+    
+    // Weekend bonus
+    if (isWeekend && !isRestDay && d > 1) {
+      tasks.push({type:"practice", tag:"practice", text:"🔬 Weekend Lab: Hands-on practice with Packet Tracer / CML", course:"Practice"});
+    }
+    
+    if (tasks.length === 0) {
+      tasks.push({type:"rest", tag:"rest", text:"🌿 Buffer day — catch up or rest", course:"Recovery"});
+    }
+    
+    days.push({
+      day: d,
+      date: date,
+      dateStr: date.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}),
+      isToday: false,
+      isRestDay,
+      tasks
+    });
+  }
+  
+  return days;
+})();
+
+let plannerView = 'today';
+let plannerProgress = {};
+
+// Load progress from localStorage
+function loadPlannerProgress(){
+  try {
+    const saved = localStorage.getItem('kw_planner_progress');
+    if(saved) plannerProgress = JSON.parse(saved);
+  } catch(e) { plannerProgress = {}; }
+}
+
+// Save progress to localStorage
+function savePlannerProgress(){
+  try { localStorage.setItem('kw_planner_progress', JSON.stringify(plannerProgress)); } catch(e) {}
+}
+
+function getTodayDayNum(){
+  const today = new Date();
+  const start = new Date(2026, 9, 1);
+  const diff = Math.floor((today - start) / (1000*60*60*24)) + 1;
+  return Math.max(1, Math.min(91, diff));
+}
+
+function renderPlannerStats(){
+  const today = getTodayDayNum();
+  const todayTasks = plannerData[today-1]?.tasks || [];
+  const todayDone = todayTasks.filter(t => plannerProgress[`${today}-${t.text}`]).length;
+  const todayTotal = todayTasks.length;
+  const todayPct = todayTotal > 0 ? Math.round(todayDone/todayTotal*100) : 0;
+  
+  // Overall stats
+  let totalDone = 0, totalTasks = 0;
+  plannerData.forEach(d => {
+    d.tasks.forEach(t => {
+      totalTasks++;
+      if(plannerProgress[`${d.day}-${t.text}`]) totalDone++;
+    });
+  });
+  const overallPct = totalTasks > 0 ? Math.round(totalDone/totalTasks*100) : 0;
+  
+  // Streak
+  let streak = 0;
+  for(let d = today; d >= 1; d--){
+    const dayTasks = plannerData[d-1]?.tasks || [];
+    const dayDone = dayTasks.filter(t => plannerProgress[`${d}-${t.text}`]).length;
+    if(dayDone > 0) streak++;
+    else break;
+  }
+  
+  document.getElementById('plannerStats').innerHTML = `
+    <div class="pstat-card"><div class="pnum">${todayPct}%</div><div class="plabel">Today's Progress</div></div>
+    <div class="pstat-card"><div class="pnum">${todayDone}/${todayTotal}</div><div class="plabel">Today's Tasks</div></div>
+    <div class="pstat-card"><div class="pnum">${streak} 🔥</div><div class="plabel">Day Streak</div></div>
+    <div class="pstat-card"><div class="pnum">${overallPct}%</div><div class="plabel">Overall Progress</div></div>
+    <div class="pstat-card"><div class="pnum">${totalDone}/${totalTasks}</div><div class="plabel">Total Tasks Done</div></div>
+  `;
+}
+
+function renderPlanner(){
+  const today = getTodayDayNum();
+  let daysToShow;
+  
+  if(plannerView === 'today'){
+    daysToShow = [plannerData[today-1]];
+  } else if(plannerView === 'week'){
+    const weekStart = Math.max(1, today - today % 7);
+    daysToShow = plannerData.slice(weekStart-1, weekStart+6);
+  } else {
+    daysToShow = plannerData;
+  }
+  
+  const container = document.getElementById('planner');
+  container.innerHTML = daysToShow.map(d => {
+    if(!d) return '';
+    const isToday = d.day === today;
+    const tasks = d.tasks;
+    const done = tasks.filter(t => plannerProgress[`${d.day}-${t.text}`]).length;
+    const pct = tasks.length > 0 ? Math.round(done/tasks.length*100) : 0;
+    const tagLabel = {new:"🆕 NEW", review:"🔁 REVIEW", practice:"✍️ PRACTICE", rest:"🌿 REST"};
+    
+    return `
+      <div class="planner-day ${isToday ? 'planner-today open' : ''}" id="planner-day-${d.day}">
+        <div class="planner-day-header" onclick="togglePlannerDay(${d.day})">
+          <div class="pdate">
+            ${isToday ? '<span style="color:var(--accent)">📍</span>' : '<span>📅</span>'}
+            Day ${d.day} — ${d.dateStr}
+            ${isToday ? '<span style="font-size:.72rem;color:var(--accent);background:rgba(79,156,255,.15);padding:2px 8px;border-radius:6px">TODAY</span>' : ''}
+            ${d.isRestDay ? '<span style="font-size:.72rem;color:var(--muted)">🌿 Rest</span>' : ''}
+          </div>
+          <div class="pmeta">
+            <span>${done}/${tasks.length} done</span>
+            <div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div>
+            <span class="planner-arrow">▶</span>
+          </div>
+        </div>
+        <div class="planner-day-body">
+          ${tasks.map(t => {
+            const taskId = `${d.day}-${t.text}`;
+            const isDone = plannerProgress[taskId];
+            return `
+              <label class="planner-task ${isDone ? 'done' : ''}" style="cursor:pointer">
+                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="togglePlannerTask('${d.day}',\`${t.text.replace(/`/g,'')}\`)">
+                <span class="ptag ptag-${t.tag}">${tagLabel[t.tag]||t.tag}</span>
+                <span class="ptext">${t.text}<span class="pcourse">${t.course}</span></span>
+              </label>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }).join('');
+  
+  renderPlannerStats();
+}
+
+function togglePlannerDay(dayNum){
+  document.getElementById('planner-day-'+dayNum)?.classList.toggle('open');
+}
+
+function togglePlannerTask(dayNum, taskText){
+  const key = `${dayNum}-${taskText}`;
+  if(plannerProgress[key]) delete plannerProgress[key];
+  else plannerProgress[key] = true;
+  savePlannerProgress();
+  renderPlanner();
+}
+
+function setPlannerView(view){
+  plannerView = view;
+  renderPlanner();
+}
+
+function resetPlanner(){
+  if(confirm('Reset all planner progress? This cannot be undone.')){
+    plannerProgress = {};
+    savePlannerProgress();
+    renderPlanner();
+  }
+}
+
 // ─── INIT ───────────────────────────────────────────────
 renderTable();
 renderRationale();
@@ -955,6 +1278,8 @@ renderChecklist();
 renderTracker();
 renderTips();
 renderFlowcharts();
+loadPlannerProgress();
+renderPlanner();
 </script>
 </body>
 </html>
