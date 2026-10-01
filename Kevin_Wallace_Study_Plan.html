@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kevin Wallace — 3-Month Study Plan</title>
+<style>
+  :root{
+    --bg:#0f1117; --card:#1a1d29; --card2:#222639; --accent:#4f9cff;
+    --accent2:#22c55e; --warn:#f59e0b; --danger:#ef4444; --text:#e5e7eb;
+    --muted:#9ca3af; --border:#2d3148;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:20px}
+  .container{max-width:1100px;margin:0 auto}
+
+  /* Hero */
+  .hero{text-align:center;padding:50px 20px 40px;background:linear-gradient(135deg,#1a1d29,#222639);border-radius:16px;border:1px solid var(--border);margin-bottom:30px}
+  .hero h1{font-size:2.2rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+  .hero .subtitle{color:var(--muted);font-size:1.05rem;margin-bottom:20px}
+  .hero-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .badge{background:var(--card2);border:1px solid var(--border);padding:6px 16px;border-radius:20px;font-size:.85rem;color:var(--muted)}
+  .badge strong{color:var(--text)}
+
+  /* Section */
+  .section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:24px}
+  .section h2{font-size:1.4rem;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+  .section h2 .icon{font-size:1.6rem}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border)}
+  th{background:var(--card2);color:var(--muted);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px}
+  tr:hover{background:var(--card2)}
+  .pill{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:600}
+  .pill-critical{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+  .pill-high{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+  .pill-medium{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
+  .stars{color:#fbbf24}
+  th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+  th.sortable:hover{color:var(--accent)}
+  th.sortable::after{content:" ⇅";font-size:.7rem;opacity:.4}
+  th.sort-asc::after{content:" ↑";opacity:1;color:var(--accent2)}
+  th.sort-desc::after{content:" ↓";opacity:1;color:var(--accent2)}
+  .bar-wrap{background:var(--bg);border-radius:6px;height:8px;overflow:hidden;width:100%;min-width:80px}
+  .bar{height:100%;border-radius:6px;transition:width .6s}
+  .bar-critical{background:linear-gradient(90deg,#ef4444,#f87171)}
+  .bar-high{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+  .bar-medium{background:linear-gradient(90deg,#22c55e,#4ade80)}
+
+  /* Timeline */
+  .timeline{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:10px}
+  .phase{border-radius:12px;padding:20px;border:1px solid var(--border)}
+  .phase-1{background:linear-gradient(160deg,rgba(79,156,255,.08),rgba(79,156,255,.02))}
+  .phase-2{background:linear-gradient(160deg,rgba(245,158,11,.08),rgba(245,158,11,.02))}
+  .phase-3{background:linear-gradient(160deg,rgba(34,197,94,.08),rgba(34,197,94,.02))}
+  .phase h3{font-size:1.1rem;margin-bottom:6px}
+  .phase .month{color:var(--muted);font-size:.8rem;margin-bottom:12px}
+  .phase .desc{font-size:.85rem;color:var(--muted)}
+  .phase .stat{margin-top:12px;font-size:.8rem}
+  .phase .stat strong{color:var(--text)}
+
+  /* Weekly schedule */
+  .week-row{display:grid;grid-template-columns:80px 120px 1fr 70px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:.88rem}
+  .week-row:last-child{border-bottom:none}
+  .week-label{font-weight:700;color:var(--accent);font-size:.85rem}
+  .week-dates{color:var(--muted);font-size:.8rem}
+  .week-course{color:var(--text)}
+  .week-course .dur{color:var(--muted);font-size:.78rem}
+  .week-hours{text-align:right;color:var(--accent2);font-weight:600;font-size:.85rem}
+  .phase-header{font-size:1.05rem;font-weight:700;margin:20px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+
+  /* Stats grid */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+  .stat-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center}
+  .stat-card .num{font-size:1.8rem;font-weight:800;color:var(--accent)}
+  .stat-card .label{font-size:.78rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+  /* Checklist */
+  .checklist{display:grid;gap:8px}
+  .check-item{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--muted)}
+  .check-item input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+
+  /* Tracker */
+  .tracker-item{display:grid;grid-template-columns:30px 1fr 60px 90px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:.88rem}
+  .tracker-item .num{color:var(--muted);font-weight:700}
+  .tracker-item .status{font-size:.8rem;padding:3px 8px;border-radius:8px;background:var(--card2);text-align:center}
+  .tracker-item .pct{color:var(--muted);font-size:.8rem;text-align:right}
+
+  /* Path diagram */
+  .path-diagram{text-align:center;padding:10px 0}
+  .path-node{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 24px;margin:6px;font-size:.85rem}
+  .path-node.primary{border-color:var(--accent);background:rgba(79,156,255,.1);font-weight:700}
+  .path-arrow{color:var(--muted);font-size:1.2rem;margin:4px 0}
+  .path-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+
+  /* Tips */
+  .tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tip{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:.88rem}
+  .tip strong{color:var(--accent)}
+
+  /* Progress bar overall */
+  .overall-progress{margin:20px 0}
+  .overall-progress .label{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+  .overall-bar-wrap{background:var(--bg);border-radius:8px;height:14px;overflow:hidden;border:1px solid var(--border)}
+  .overall-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:8px;width:0%;transition:width .5s}
+
+  /* Responsive */
+  @media(max-width:768px){
+    .timeline{grid-template-columns:1fr}
+    .week-row{grid-template-columns:1fr;gap:4px}
+    .week-hours{text-align:left}
+    .tips-grid{grid-template-columns:1fr}
+    .tracker-item{grid-template-columns:24px 1fr 50px}
+    .tracker-item .pct{display:none}
+    table{font-size:.78rem}
+    th,td{padding:8px 6px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Kevin Wallace — LinkedIn Learning</h1>
+    <p class="subtitle">3-Month Completion Plan · Importance Analysis · Daily Goals</p>
+    <div class="hero-badges">
+      <span class="badge">👨‍🏫 <strong>CCIEx2 Lifetime Emeritus #7945</strong></span>
+      <span class="badge">📅 <strong>Oct 1 → Dec 31, 2026</strong></span>
+      <span class="badge">🎥 <strong>80h 41m</strong> of content</span>
+      <span class="badge">🎯 <strong>10 courses</strong></span>
+      <span class="badge">⏱️ <strong>~1.5 hrs/day</strong></span>
+    </div>
+  </div>
+
+  <!-- OVERALL PROGRESS -->
+  <div class="section">
+    <h2><span class="icon">📈</span> Overall Progress</h2>
+    <div class="overall-progress">
+      <div class="label"><span>Completion</span><span id="pctLabel">0%</span></div>
+      <div class="overall-bar-wrap"><div class="overall-bar" id="overallBar"></div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="num">10</div><div class="label">Courses</div></div>
+      <div class="stat-card"><div class="num">80h</div><div class="label">Video Content</div></div>
+      <div class="stat-card"><div class="num">91</div><div class="label">Days</div></div>
+      <div class="stat-card"><div class="num">~1.5h</div><div class="label">Daily Goal</div></div>
+      <div class="stat-card"><div class="num">4</div><div class="label">Certifications</div></div>
+    </div>
+  </div>
+
+  <!-- COURSE CATALOG -->
+  <div class="section">
+    <h2><span class="icon">📊</span> Course Catalog &amp; Importance Ranking</h2>
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th class="sortable" data-key="n">#</th>
+          <th class="sortable" data-key="title">Course</th>
+          <th class="sortable" data-key="durMin">Duration</th>
+          <th class="sortable" data-key="level">Level</th>
+          <th class="sortable" data-key="rating">Rating</th>
+          <th class="sortable" data-key="imp">Importance</th>
+          <th class="sortable" data-key="priority">Priority</th>
+        </tr>
+      </thead>
+      <tbody id="courseTable"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- IMPORTANCE RATIONALE -->
+  <div class="section">
+    <h2><span class="icon">🎯</span> Importance Rationale</h2>
+    <div id="rationale"></div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section">
+    <h2><span class="icon">📅</span> 3-Month Timeline</h2>
+    <div class="timeline">
+      <div class="phase phase-1">
+        <h3>🟦 Phase 1: Foundations</h3>
+        <div class="month">October 1–31</div>
+        <div class="desc">Master networking fundamentals. Courses 1–5 (Networking Foundations series).</div>
+        <div class="stat"><strong>~9h 45m</strong> video · <strong>~1 hr/day</strong></div>
+      </div>
+      <div class="phase phase-2">
+        <h3>🟧 Phase 2: Certifications</h3>
+        <div class="month">November 1–30</div>
+        <div class="desc">CCST + CCNA cert prep. Courses 6–7. The flagship certification goal.</div>
+        <div class="stat"><strong>~28h 32m</strong> video · <strong>~1.5 hr/day</strong></div>
+      </div>
+      <div class="phase phase-3">
+        <h3>🟩 Phase 3: Advanced</h3>
+        <div class="month">December 1–31</div>
+        <div class="desc">CCNP ENCOR + ENARSI + DevNet. Courses 8–10. Professional level.</div>
+        <div class="stat"><strong>~42h 44m</strong> video · <strong>~1.5 hr/day</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY SCHEDULE -->
+  <div class="section">
+    <h2><span class="icon">🗓️</span> Weekly Study Schedule</h2>
+    <div id="schedule"></div>
+  </div>
+
+  <!-- DAILY GOALS -->
+  <div class="section">
+    <h2><span class="icon">📈</span> Daily Goal Summary</h2>
+    <div class="stats-grid" id="dailyStats"></div>
+  </div>
+
+  <!-- WEEKLY CHECKLIST -->
+  <div class="section">
+    <h2><span class="icon">✅</span> Weekly Checklist</h2>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+  <!-- PROGRESS TRACKER -->
+  <div class="section">
+    <h2><span class="icon">🏁</span> Progress Tracker</h2>
+    <div id="tracker"></div>
+  </div>
+
+  <!-- CERT PATH -->
+  <div class="section">
+    <h2><span class="icon">📜</span> Certification Path</h2>
+    <div class="path-diagram">
+      <div class="path-node">CCST Networking (100-150)</div>
+      <div class="path-arrow">↓</div>
+      <div class="path-node primary">⭐ CCNA (200-301 v1.1) — Primary Goal</div>
+      <div class="path-arrow">↓</div>
+      <div class="path-row">
+        <div class="path-node">CCNP ENCOR (350-401)</div>
+        <div class="path-node">CCNP ENARSI (300-410)</div>
+        <div class="path-node">DevNet Associate (200-901)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="section">
+    <h2><span class="icon">💡</span> Study Tips</h2>
+    <div class="tips-grid" id="tips"></div>
+  </div>
+
+  <div style="text-align:center;color:var(--muted);font-size:.8rem;padding:20px 0 40px">
+    Generated on 2026-10-01 · Source: linkedin.com/learning/instructors/kevin-wallace
+  </div>
+
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────
+// durMin = total minutes (for numeric sorting); priorityRank for sorting
+const priorityRank = {critical:0, high:1, medium:2};
+function durToMin(s){const h=(s.match(/(\d+)h/)||['','0'])[1];const m=(s.match(/(\d+)m/)||['','0'])[1];return parseInt(h)*60+parseInt(m)}
+
+const courses = [
+  {n:1, title:"Networking Foundations: Networking Basics", dur:"1h 49m", level:"Beginner", rating:4.8, reviews:"11,534", imp:10, priority:"critical"},
+  {n:2, title:"Cisco Networking Foundations: Fundamentals of Cisco Networking", dur:"2h 3m", level:"Beginner", rating:4.8, reviews:"1,769", imp:8, priority:"critical"},
+  {n:3, title:"Cisco Networking Foundations: IP Addressing", dur:"1h 35m", level:"Beginner", rating:4.8, reviews:"543", imp:8, priority:"critical"},
+  {n:4, title:"Cisco Networking Foundations: Switching and Routing", dur:"1h 50m", level:"Beginner", rating:4.7, reviews:"1,357", imp:8, priority:"critical"},
+  {n:5, title:"Cisco Networking Foundations: Wireless, Services, Security & Virtualization", dur:"2h 28m", level:"Beginner", rating:4.8, reviews:"404", imp:7, priority:"high"},
+  {n:6, title:"CCST Networking (100-150) Cert Prep", dur:"10h 10m", level:"Beginner", rating:4.8, reviews:"116", imp:10, priority:"high"},
+  {n:7, title:"CCNA v1.1 (200-301) Cert Prep", dur:"18h 22m", level:"Intermediate", rating:4.8, reviews:"424", imp:20, priority:"critical"},
+  {n:8, title:"CCNP Enterprise: ENCOR v1.2 (350-401) Cert Prep", dur:"16h 21m", level:"Intermediate", rating:4.7, reviews:"29", imp:12, priority:"high"},
+  {n:9, title:"CCNP Enterprise: ENARSI (300-410) Cert Prep", dur:"13h 21m", level:"Intermediate", rating:4.8, reviews:"53", imp:10, priority:"medium"},
+  {n:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep", dur:"13h 2m", level:"Intermediate", rating:4.8, reviews:"92", imp:7, priority:"medium"},
+].map(c => ({...c, durMin:durToMin(c.dur), priorityRank:priorityRank[c.priority]}));
+
+// ─── SORTING ────────────────────────────────────────────
+let sortKey = 'imp';      // default: sort by importance
+let sortDir = 'desc';     // default: highest first
+
+function getSortedCourses(){
+  const arr = [...courses];
+  arr.sort((a,b) => {
+    let va = a[sortKey], vb = b[sortKey];
+    if(sortKey === 'priority') { va = a.priorityRank; vb = b.priorityRank; }
+    if(typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+    if(va < vb) return sortDir === 'asc' ? -1 : 1;
+    if(va > vb) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return arr;
+}
+
+const rationale = [
+  {tier:"🔴 Critical (54%)", items:[
+    {c:"Networking Foundations: Networking Basics", w:"The absolute starting point. 11,500+ ratings. Covers OSI model, IP addresses, switches, routers, cabling — everything builds on this."},
+    {c:"Cisco Networking Foundations: Fundamentals", w:"Bridges general networking to Cisco-specific concepts. OSI/TCP-IP models, protocols, Cisco router/switch config basics."},
+    {c:"Cisco Networking Foundations: IP Addressing", w:"IPv4 & IPv6 addressing is tested in EVERY Cisco exam. Subnetting is a make-or-break skill."},
+    {c:"Cisco Networking Foundations: Switching & Routing", w:"VLANs, STP, EtherChannel, routing protocols — core of all network engineering work."},
+    {c:"CCNA v1.1 (200-301) Cert Prep", w:"The flagship certification. 18+ hours covering all 6 exam domains. CCNA is the #1 most requested networking certification by employers. Highest single-course importance."},
+  ]},
+  {tier:"🟡 High (29%)", items:[
+    {c:"Wireless, Services, Security & Virtualization", w:"Completes the foundations series. DNS, NAT, DHCP, ACLs, WLANs, virtualization — essential knowledge."},
+    {c:"CCST Networking (100-150) Cert Prep", w:"Entry-level Cisco cert. Great confidence builder before CCNA. 10 hours of beginner-friendly content."},
+    {c:"CCNP ENCOR v1.2 (350-401)", w:"Professional-level certification. SD-WAN, SD-Access, BGP, OSPF, multicast, automation. Career-advancing."},
+  ]},
+  {tier:"🟢 Medium (17%)", items:[
+    {c:"CCNP ENARSI (300-410)", w:"Advanced routing & troubleshooting specialization. Important if targeting CCNP Enterprise concentration."},
+    {c:"DevNet Associate DEVASC", w:"Network automation is a growing field. Python, APIs, NETCONF, RESTCONF. Good differentiator but not core networking."},
+  ]},
+];
+
+const schedule = [
+  {phase:"PHASE 1: FOUNDATIONS (Oct 1–31)", weeks:[
+    {w:"W1", d:"Oct 1–7", c:"Networking Foundations: Networking Basics", dur:"1h 49m", hrs:"~3h"},
+    {w:"W2", d:"Oct 8–14", c:"Cisco Networking Foundations: Fundamentals", dur:"2h 3m", hrs:"~3.5h"},
+    {w:"W3", d:"Oct 15–21", c:"Cisco Networking Foundations: IP Addressing", dur:"1h 35m", hrs:"~3h"},
+    {w:"W4", d:"Oct 22–28", c:"Cisco Networking Foundations: Switching & Routing", dur:"1h 50m", hrs:"~3h"},
+    {w:"W5", d:"Oct 29–31", c:"Cisco Networking Foundations: Wireless/Services/Security/Virtualization", dur:"2h 28m", hrs:"~4h"},
+  ]},
+  {phase:"PHASE 2: CERTIFICATIONS (Nov 1–30)", weeks:[
+    {w:"W6", d:"Nov 1–10", c:"CCST Networking (100-150) Cert Prep", dur:"10h 10m", hrs:"~15h"},
+    {w:"W7–W10", d:"Nov 11–30", c:"CCNA v1.1 (200-301) Cert Prep ⭐", dur:"18h 22m", hrs:"~25h"},
+  ]},
+  {phase:"PHASE 3: ADVANCED & SPECIALIZATION (Dec 1–31)", weeks:[
+    {w:"W11–W15", d:"Dec 1–14", c:"CCNP ENCOR v1.2 (350-401) Cert Prep", dur:"16h 21m", hrs:"~22h"},
+    {w:"W16–W19", d:"Dec 15–24", c:"CCNP ENARSI (300-410) Cert Prep", dur:"13h 21m", hrs:"~18h"},
+    {w:"W20–W21", d:"Dec 25–31", c:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep", dur:"13h 2m", hrs:"~14h"},
+  ]},
+];
+
+const dailyStats = [
+  {num:"1 hr", label:"Min Daily (Oct)"},
+  {num:"1.5 hr", label:"Min Daily (Nov-Dec)"},
+  {num:"80h 41m", label:"Total Video"},
+  {num:"120-140h", label:"Total Study w/ Practice"},
+  {num:"50/30/20", label:"Video/Practice/Notes %"},
+  {num:"1 day", label:"Rest Day / Week"},
+];
+
+const checklistItems = [
+  "Watch assigned video sections (___ min/day)",
+  "Take handwritten or digital notes per section",
+  "Complete all quizzes in the course",
+  "Complete exercise files (if any)",
+  "Spend 20+ min on hands-on practice (Packet Tracer / CML / DevNet Sandbox)",
+  "Review previous week's notes on rest day",
+  "Update progress tracker",
+];
+
+const tips = [
+  {t:"Subnetting is king", d:"Practice IPv4/IPv6 subnetting every single day during Phase 1 & 2. Use subnettingpractice.com."},
+  {t:"Use Packet Tracer", d:"Cisco Packet Tracer (free) or Cisco Modeling Labs for hands-on labs."},
+  {t:"Take notes by hand", d:"Studies show handwritten notes improve retention by 30%+."},
+  {t:"Don't skip quizzes", d:"They reinforce learning and identify gaps immediately."},
+  {t:"Watch at 1.25x–1.5x", d:"Kevin Wallace speaks clearly; speed up if comfortable."},
+  {t:"Schedule exam early", d:"Book your CCNA exam at the start of November to create accountability."},
+  {t:"Rest days matter", d:"Use 1 day/week for review, not new content. Burnout is the #1 reason people quit."},
+  {t:"Join a study group", d:"Reddit r/ccna, r/ccnp, or Discord communities for motivation."},
+];
+
+// ─── RENDER ─────────────────────────────────────────────
+const pillLabel = {critical:"🔴 Critical", high:"🟡 High", medium:"🟢 Medium"};
+
+function renderTable(){
+  const sorted = getSortedCourses();
+  const tb = document.getElementById('courseTable');
+  tb.innerHTML = sorted.map(c => `
+    <tr>
+      <td><strong>${c.n}</strong></td>
+      <td>${c.title}</td>
+      <td>${c.dur}</td>
+      <td>${c.level}</td>
+      <td><span class="stars">★</span> ${c.rating} <span style="color:var(--muted);font-size:.78rem">(${c.reviews})</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="bar-wrap"><div class="bar bar-${c.priority}" style="width:${c.imp*5}%"></div></div>
+          <strong>${c.imp}%</strong>
+        </div>
+      </td>
+      <td><span class="pill pill-${c.priority}">${pillLabel[c.priority]}</span></td>
+    </tr>`).join('');
+  // Update header sort indicators
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.classList.remove('sort-asc','sort-desc');
+    if(th.dataset.key === sortKey){
+      th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+  });
+}
+
+function renderRationale(){
+  document.getElementById('rationale').innerHTML = rationale.map(group => `
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:1.05rem;margin-bottom:10px">${group.tier}</h3>
+      ${group.items.map(i => `
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px">
+          <strong style="color:var(--accent)">${i.c}</strong>
+          <p style="color:var(--muted);font-size:.88rem;margin-top:4px">${i.w}</p>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function renderSchedule(){
+  document.getElementById('schedule').innerHTML = schedule.map(ph => `
+    <div class="phase-header">${ph.phase}</div>
+    ${ph.weeks.map(w => `
+      <div class="week-row">
+        <div class="week-label">${w.w}</div>
+        <div class="week-dates">${w.d}</div>
+        <div class="week-course">${w.c}<br><span class="dur">${w.dur}</span></div>
+        <div class="week-hours">${w.hrs}</div>
+      </div>`).join('')}
+  `).join('');
+}
+
+function renderDailyStats(){
+  document.getElementById('dailyStats').innerHTML = dailyStats.map(s => `
+    <div class="stat-card"><div class="num">${s.num}</div><div class="label">${s.label}</div></div>`).join('');
+}
+
+function renderChecklist(){
+  document.getElementById('checklist').innerHTML = checklistItems.map(i => `
+    <label class="check-item"><input type="checkbox"> ${i}</label>`).join('');
+}
+
+function renderTracker(){
+  const sorted = getSortedCourses();
+  document.getElementById('tracker').innerHTML = sorted.map(c => `
+    <div class="tracker-item" data-course="${c.n}">
+      <span class="num">${c.n}</span>
+      <span>${c.title}</span>
+      <span class="status">⬜ Not Started</span>
+      <span class="pct">0%</span>
+    </div>`).join('');
+}
+
+function renderTips(){
+  document.getElementById('tips').innerHTML = tips.map(t => `
+    <div class="tip"><strong>${t.t}</strong> — ${t.d}</div>`).join('');
+}
+
+// ─── INTERACTIVITY ──────────────────────────────────────
+function updateOverall(){
+  const items = document.querySelectorAll('.tracker-item');
+  let total = 0;
+  items.forEach(it => {
+    const pct = parseInt(it.dataset.pct || 0);
+    total += pct;
+  });
+  const overall = Math.round(total / items.length);
+  document.getElementById('overallBar').style.width = overall + '%';
+  document.getElementById('pctLabel').textContent = overall + '%';
+}
+
+// Cycle status on click: Not Started → In Progress → Completed
+document.addEventListener('click', e => {
+  const item = e.target.closest('.tracker-item');
+  if(!item) return;
+  const statusEl = item.querySelector('.status');
+  const pctEl = item.querySelector('.pct');
+  const states = [
+    {label:'⬜ Not Started', pct:0},
+    {label:'🔵 In Progress', pct:25},
+    {label:'🔵 In Progress', pct:50},
+    {label:'🔵 In Progress', pct:75},
+    {label:'✅ Completed', pct:100},
+  ];
+  let cur = parseInt(item.dataset.pct || 0);
+  let idx = states.findIndex(s => s.pct === cur);
+  idx = (idx + 1) % states.length;
+  const next = states[idx];
+  statusEl.textContent = next.label;
+  pctEl.textContent = next.pct + '%';
+  item.dataset.pct = next.pct;
+  if(next.pct === 100) statusEl.style.background = 'rgba(34,197,94,.15)';
+  else if(next.pct > 0) statusEl.style.background = 'rgba(79,156,255,.15)';
+  else statusEl.style.background = 'var(--card2)';
+  updateOverall();
+});
+
+// Sort when a table header is clicked
+document.addEventListener('click', e => {
+  const th = e.target.closest('th.sortable');
+  if(!th) return;
+  const key = th.dataset.key;
+  if(sortKey === key){
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey = key;
+    sortDir = (key === 'title' || key === 'level') ? 'asc' : 'desc';
+  }
+  renderTable();
+  renderTracker();
+});
+
+// ─── INIT ───────────────────────────────────────────────
+renderTable();
+renderRationale();
+renderSchedule();
+renderDailyStats();
+renderChecklist();
+renderTracker();
+renderTips();
+</script>
+</body>
+</html>
