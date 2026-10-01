@@ -82,10 +82,15 @@
   .check-item input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
 
   /* Tracker */
-  .tracker-item{display:grid;grid-template-columns:30px 1fr 60px 90px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:.88rem}
+  .tracker-item{display:grid;grid-template-columns:30px 1fr 110px 60px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:.88rem}
   .tracker-item .num{color:var(--muted);font-weight:700}
   .tracker-item .status{font-size:.8rem;padding:3px 8px;border-radius:8px;background:var(--card2);text-align:center}
   .tracker-item .pct{color:var(--muted);font-size:.8rem;text-align:right}
+  .link-btn{display:inline-block;padding:4px 12px;border-radius:8px;font-size:.78rem;font-weight:600;background:rgba(79,156,255,.12);color:var(--accent);border:1px solid rgba(79,156,255,.25);text-decoration:none;white-space:nowrap}
+  .link-btn:hover{background:rgba(79,156,255,.2);border-color:var(--accent)}
+  .tracker-item .link-btn{padding:3px 10px;font-size:.75rem}
+  .week-course a{color:var(--text);text-decoration:none}
+  .week-course a:hover{color:var(--accent);text-decoration:underline}
 
   /* Path diagram */
   .path-diagram{text-align:center;padding:10px 0}
@@ -164,6 +169,7 @@
           <th class="sortable" data-key="rating">Rating</th>
           <th class="sortable" data-key="imp">Importance</th>
           <th class="sortable" data-key="priority">Priority</th>
+          <th>LinkedIn Link</th>
         </tr>
       </thead>
       <tbody id="courseTable"></tbody>
@@ -261,16 +267,16 @@ const priorityRank = {critical:0, high:1, medium:2};
 function durToMin(s){const h=(s.match(/(\d+)h/)||['','0'])[1];const m=(s.match(/(\d+)m/)||['','0'])[1];return parseInt(h)*60+parseInt(m)}
 
 const courses = [
-  {n:1, title:"Networking Foundations: Networking Basics", dur:"1h 49m", level:"Beginner", rating:4.8, reviews:"11,534", imp:10, priority:"critical"},
-  {n:2, title:"Cisco Networking Foundations: Fundamentals of Cisco Networking", dur:"2h 3m", level:"Beginner", rating:4.8, reviews:"1,769", imp:8, priority:"critical"},
-  {n:3, title:"Cisco Networking Foundations: IP Addressing", dur:"1h 35m", level:"Beginner", rating:4.8, reviews:"543", imp:8, priority:"critical"},
-  {n:4, title:"Cisco Networking Foundations: Switching and Routing", dur:"1h 50m", level:"Beginner", rating:4.7, reviews:"1,357", imp:8, priority:"critical"},
-  {n:5, title:"Cisco Networking Foundations: Wireless, Services, Security & Virtualization", dur:"2h 28m", level:"Beginner", rating:4.8, reviews:"404", imp:7, priority:"high"},
-  {n:6, title:"CCST Networking (100-150) Cert Prep", dur:"10h 10m", level:"Beginner", rating:4.8, reviews:"116", imp:10, priority:"high"},
-  {n:7, title:"CCNA v1.1 (200-301) Cert Prep", dur:"18h 22m", level:"Intermediate", rating:4.8, reviews:"424", imp:20, priority:"critical"},
-  {n:8, title:"CCNP Enterprise: ENCOR v1.2 (350-401) Cert Prep", dur:"16h 21m", level:"Intermediate", rating:4.7, reviews:"29", imp:12, priority:"high"},
-  {n:9, title:"CCNP Enterprise: ENARSI (300-410) Cert Prep", dur:"13h 21m", level:"Intermediate", rating:4.8, reviews:"53", imp:10, priority:"medium"},
-  {n:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep", dur:"13h 2m", level:"Intermediate", rating:4.8, reviews:"92", imp:7, priority:"medium"},
+  {n:1, title:"Networking Foundations: Networking Basics", dur:"1h 49m", level:"Beginner", rating:4.8, reviews:"11,534", imp:10, priority:"critical", url:"https://www.linkedin.com/learning/networking-foundations-networking-basics"},
+  {n:2, title:"Cisco Networking Foundations: Fundamentals of Cisco Networking", dur:"2h 3m", level:"Beginner", rating:4.8, reviews:"1,769", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-fundamentals-of-cisco-networking"},
+  {n:3, title:"Cisco Networking Foundations: IP Addressing", dur:"1h 35m", level:"Beginner", rating:4.8, reviews:"543", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-ip-addressing"},
+  {n:4, title:"Cisco Networking Foundations: Switching and Routing", dur:"1h 50m", level:"Beginner", rating:4.7, reviews:"1,357", imp:8, priority:"critical", url:"https://www.linkedin.com/learning/cisco-networking-foundations-switching-and-routing"},
+  {n:5, title:"Cisco Networking Foundations: Wireless, Services, Security & Virtualization", dur:"2h 28m", level:"Beginner", rating:4.8, reviews:"404", imp:7, priority:"high", url:"https://www.linkedin.com/learning/cisco-networking-foundations-wireless-networks-services-security-and-virtualization"},
+  {n:6, title:"CCST Networking (100-150) Cert Prep", dur:"10h 10m", level:"Beginner", rating:4.8, reviews:"116", imp:10, priority:"high", url:"https://www.linkedin.com/learning/cisco-certified-support-technician-ccst-networking-100-150-cert-prep"},
+  {n:7, title:"CCNA v1.1 (200-301) Cert Prep", dur:"18h 22m", level:"Intermediate", rating:4.8, reviews:"424", imp:20, priority:"critical", url:"https://www.linkedin.com/learning/cisco-certified-network-associate-ccna-v1-1-200-301-cert-prep"},
+  {n:8, title:"CCNP Enterprise: ENCOR v1.2 (350-401) Cert Prep", dur:"16h 21m", level:"Intermediate", rating:4.7, reviews:"29", imp:12, priority:"high", url:"https://www.linkedin.com/learning/cisco-ccnp-enterprise-encor-v1-2-350-401-cert-prep"},
+  {n:9, title:"CCNP Enterprise: ENARSI (300-410) Cert Prep", dur:"13h 21m", level:"Intermediate", rating:4.8, reviews:"53", imp:10, priority:"medium", url:"https://www.linkedin.com/learning/cisco-ccnp-enterprise-enarsi-300-410-cert-prep"},
+  {n:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep", dur:"13h 2m", level:"Intermediate", rating:4.8, reviews:"92", imp:7, priority:"medium", url:"https://www.linkedin.com/learning/cisco-certified-devnet-associate-devasc-1-1-200-901-cert-prep"},
 ].map(c => ({...c, durMin:durToMin(c.dur), priorityRank:priorityRank[c.priority]}));
 
 // ─── SORTING ────────────────────────────────────────────
@@ -367,7 +373,7 @@ function renderTable(){
   tb.innerHTML = sorted.map(c => `
     <tr>
       <td><strong>${c.n}</strong></td>
-      <td>${c.title}</td>
+      <td><a href="${c.url}" target="_blank" style="color:var(--text);text-decoration:none">${c.title}</a></td>
       <td>${c.dur}</td>
       <td>${c.level}</td>
       <td><span class="stars">★</span> ${c.rating} <span style="color:var(--muted);font-size:.78rem">(${c.reviews})</span></td>
@@ -378,6 +384,7 @@ function renderTable(){
         </div>
       </td>
       <td><span class="pill pill-${c.priority}">${pillLabel[c.priority]}</span></td>
+      <td><a href="${c.url}" target="_blank" class="link-btn">Open Course ↗</a></td>
     </tr>`).join('');
   // Update header sort indicators
   document.querySelectorAll('th.sortable').forEach(th => {
@@ -401,15 +408,34 @@ function renderRationale(){
 }
 
 function renderSchedule(){
+  const urlMap = {};
+  courses.forEach(c => { urlMap[c.n] = c.url; });
+  // Map schedule course names to course numbers
+  const nameToNum = {
+    "Networking Foundations: Networking Basics":1,
+    "Cisco Networking Foundations: Fundamentals":2,
+    "Cisco Networking Foundations: IP Addressing":3,
+    "Cisco Networking Foundations: Switching & Routing":4,
+    "Cisco Networking Foundations: Wireless/Services/Security/Virtualization":5,
+    "CCST Networking (100-150) Cert Prep":6,
+    "CCNA v1.1 (200-301) Cert Prep ⭐":7,
+    "CCNP ENCOR v1.2 (350-401) Cert Prep":8,
+    "CCNP ENARSI (300-410) Cert Prep":9,
+    "DevNet Associate DEVASC 1.1 (200-901) Cert Prep":10,
+  };
   document.getElementById('schedule').innerHTML = schedule.map(ph => `
     <div class="phase-header">${ph.phase}</div>
-    ${ph.weeks.map(w => `
+    ${ph.weeks.map(w => {
+      const cNum = nameToNum[w.c] || 0;
+      const cUrl = urlMap[cNum] || '#';
+      return `
       <div class="week-row">
         <div class="week-label">${w.w}</div>
         <div class="week-dates">${w.d}</div>
-        <div class="week-course">${w.c}<br><span class="dur">${w.dur}</span></div>
+        <div class="week-course"><a href="${cUrl}" target="_blank">${w.c}</a><br><span class="dur">${w.dur}</span></div>
         <div class="week-hours">${w.hrs}</div>
-      </div>`).join('')}
+      </div>`;
+    }).join('')}
   `).join('');
 }
 
@@ -428,7 +454,7 @@ function renderTracker(){
   document.getElementById('tracker').innerHTML = sorted.map(c => `
     <div class="tracker-item" data-course="${c.n}">
       <span class="num">${c.n}</span>
-      <span>${c.title}</span>
+      <span><a href="${c.url}" target="_blank" style="color:var(--text);text-decoration:none">${c.title}</a></span>
       <span class="status">⬜ Not Started</span>
       <span class="pct">0%</span>
     </div>`).join('');
