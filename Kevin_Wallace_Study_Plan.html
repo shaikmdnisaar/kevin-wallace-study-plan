@@ -526,6 +526,38 @@ Example:
 
 </div>
 
+<!-- ANIMATION STUDIO MODAL -->
+<div id="animModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;overflow:auto;padding:20px">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:900px;margin:20px auto;padding:24px;position:relative">
+    <button onclick="closeAnimModal()" style="position:absolute;top:16px;right:20px;font-size:1.4rem;color:var(--muted);background:none;border:none;cursor:pointer">✕</button>
+    <h2 style="color:var(--accent);margin-bottom:6px;font-size:1.3rem">🎬 Animation Studio</h2>
+    <div id="animModalLesson" style="font-size:.85rem;color:var(--muted);margin-bottom:16px"></div>
+
+    <!-- Character Selector -->
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+      <h4 style="color:var(--accent);margin-bottom:10px;font-size:.9rem">🎭 Step 1: Choose Your Characters</h4>
+      <div id="animModalChars" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="animCustomChar" placeholder="Add custom character name..." style="flex:1;min-width:200px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:.85rem">
+        <input id="animCustomEmoji" placeholder="emoji" style="width:60px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);font-size:.85rem;text-align:center">
+        <input id="animCustomRole" placeholder="role" style="width:150px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:.85rem">
+        <button class="flow-btn" onclick="addCustomChar()">➕ Add Character</button>
+      </div>
+    </div>
+
+    <!-- Transcript Input -->
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+      <h4 style="color:var(--accent);margin-bottom:10px;font-size:.9rem">📝 Step 2: Paste Video Transcript</h4>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px">Go to the LinkedIn Learning video → click "Show transcript" → copy the text → paste here</p>
+      <textarea id="animModalTranscript" placeholder="Paste the video transcript here..." style="width:100%;min-height:120px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-size:.85rem;font-family:inherit;resize:vertical;margin-bottom:10px"></textarea>
+      <button class="notif-btn notif-btn-primary" onclick="generateFromModal()">🎬 Generate Animation Script</button>
+    </div>
+
+    <!-- Output -->
+    <div id="animModalOutput" style="display:none"></div>
+  </div>
+</div>
+
 <script>
 // ─── DATA ───────────────────────────────────────────────
 // durMin = total minutes (for numeric sorting); priorityRank for sorting
@@ -1493,11 +1525,12 @@ function renderPlanner(){
             const taskId = `${d.day}-${t.text}`;
             const isDone = plannerProgress[taskId];
             const linkHtml = t.url && t.url !== '#' ? `<a href="${t.url}" target="_blank" style="font-size:.68rem;color:var(--accent);text-decoration:none;margin-left:6px;padding:1px 6px;border-radius:4px;background:rgba(79,156,255,.1);border:1px solid rgba(79,156,255,.2)">Open ↗</a>` : '';
+            const animBtn = t.tag === 'new' ? `<button onclick="openAnimationStudio('${t.text.replace(/'/g,"\\'")}','${t.course.replace(/'/g,"\\'")}')" style="font-size:.68rem;color:#fbbf24;text-decoration:none;margin-left:4px;padding:1px 6px;border-radius:4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);cursor:pointer">🎬 Animate</button>` : '';
             return `
               <label class="planner-task ${isDone ? 'done' : ''}" style="cursor:pointer">
                 <input type="checkbox" ${isDone ? 'checked' : ''} onchange="togglePlannerTask('${d.day}',\`${t.text.replace(/`/g,'')}\`)">
                 <span class="ptag ptag-${t.tag}">${tagLabel[t.tag]||t.tag}</span>
-                <span class="ptext">${t.text}${linkHtml}<span class="pcourse">${t.course}</span></span>
+                <span class="ptext">${t.text}${linkHtml}${animBtn}<span class="pcourse">${t.course}</span></span>
               </label>`;
           }).join('')}
         </div>
@@ -2143,6 +2176,175 @@ function downloadAnimationScript(){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'google-flow-animation-script.txt';
+  a.click();
+}
+
+// ─── ANIMATION STUDIO MODAL ─────────────────────────────
+let animStudioChars = [];
+let animStudioTopic = 'osi';
+let animStudioLesson = '';
+
+function openAnimationStudio(lessonText, courseName){
+  animStudioLesson = lessonText;
+  // Detect topic from lesson text
+  const lowerText = lessonText.toLowerCase();
+  if(lowerText.includes('osi') || lowerText.includes('layer')) animStudioTopic = 'osi';
+  else if(lowerText.includes('subnet')) animStudioTopic = 'subnetting';
+  else if(lowerText.includes('vlan') || lowerText.includes('trunk')) animStudioTopic = 'vlan';
+  else if(lowerText.includes('spanning tree') || lowerText.includes('stp')) animStudioTopic = 'stp';
+  else if(lowerText.includes('ospf')) animStudioTopic = 'ospf';
+  else if(lowerText.includes('nat')) animStudioTopic = 'nat';
+  else if(lowerText.includes('acl') || lowerText.includes('access control')) animStudioTopic = 'acl';
+  else if(lowerText.includes('dhcp')) animStudioTopic = 'dhcp';
+  else if(lowerText.includes('bgp')) animStudioTopic = 'bgp';
+  else if(lowerText.includes('ipv6')) animStudioTopic = 'ipv6';
+  else if(lowerText.includes('vpn') || lowerText.includes('ipsec')) animStudioTopic = 'vpn';
+  else if(lowerText.includes('firewall') || lowerText.includes('security')) animStudioTopic = 'firewall';
+  else if(lowerText.includes('python') || lowerText.includes('automation')) animStudioTopic = 'automation';
+  else if(lowerText.includes('wireless') || lowerText.includes('wi-fi')) animStudioTopic = 'wifi';
+  else animStudioTopic = 'osi';
+
+  // Load characters for detected topic
+  const charData = topicCharacterMap[animStudioTopic] || topicCharacterMap.osi;
+  animStudioChars = [...charData.chars];
+
+  // Update modal
+  document.getElementById('animModalLesson').innerHTML = `<strong>Lesson:</strong> ${lessonText}<br><strong>Course:</strong> ${courseName}<br><strong>Detected Topic:</strong> ${animStudioTopic.toUpperCase()}`;
+  renderModalChars();
+  document.getElementById('animModalTranscript').value = '';
+  document.getElementById('animModalOutput').style.display = 'none';
+  document.getElementById('animModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAnimModal(){
+  document.getElementById('animModal').style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+function renderModalChars(){
+  const container = document.getElementById('animModalChars');
+  container.innerHTML = animStudioChars.map((c, i) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--card);border-radius:8px;border:1px solid var(--border)">
+      <span style="font-size:1.4rem">${c.emoji}</span>
+      <div style="flex:1">
+        <div style="font-size:.82rem;font-weight:700;color:var(--text)">${c.name}</div>
+        <div style="font-size:.7rem;color:var(--accent)">${c.role}</div>
+      </div>
+      <button onclick="removeModalChar(${i})" style="font-size:.9rem;color:#f87171;background:none;border:none;cursor:pointer">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeModalChar(idx){
+  animStudioChars.splice(idx, 1);
+  renderModalChars();
+}
+
+function addCustomChar(){
+  const name = document.getElementById('animCustomChar').value.trim();
+  const emoji = document.getElementById('animCustomEmoji').value.trim() || '🎭';
+  const role = document.getElementById('animCustomRole').value.trim() || 'Custom Character';
+  if(!name) { alert('Please enter a character name'); return; }
+  animStudioChars.push({emoji, name, role});
+  document.getElementById('animCustomChar').value = '';
+  document.getElementById('animCustomEmoji').value = '';
+  document.getElementById('animCustomRole').value = '';
+  renderModalChars();
+}
+
+function generateFromModal(){
+  const transcript = document.getElementById('animModalTranscript').value.trim();
+  if(!transcript || transcript.length < 20){
+    alert('Please paste the video transcript first.\n\nTo get the transcript:\n1. Open the LinkedIn Learning video\n2. Click "Show transcript" below the video\n3. Copy the text\n4. Paste it here');
+    return;
+  }
+  if(animStudioChars.length === 0){
+    alert('Please add at least one character.');
+    return;
+  }
+
+  const charData = topicCharacterMap[animStudioTopic] || topicCharacterMap.osi;
+  const mainCharName = charData.mainChar;
+  const mainCharEmoji = charData.emoji;
+  const setting = charData.setting;
+
+  // Split transcript into scenes
+  const sceneTexts = splitTranscriptIntoScenes(transcript, Math.min(6, Math.max(3, animStudioChars.length)));
+  
+  // Generate scenes using the modal characters
+  const scenes = sceneTexts.map((text, i) => {
+    const charIdx = i % animStudioChars.length;
+    const speaker = animStudioChars[charIdx];
+    return {
+      num: i + 1,
+      title: `Scene ${i+1}: ${getSceneTitle(text, animStudioTopic)}`,
+      setting: getSceneSetting(i, setting),
+      speaker: speaker,
+      dialogue: transformToDialogue(text, speaker, animStudioTopic),
+      visual: getVisualDirection(text, i, animStudioTopic, {mainChar: mainCharName, emoji: mainCharEmoji, setting})
+    };
+  });
+
+  // Build output
+  const output = document.getElementById('animModalOutput');
+  output.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h4 style="color:var(--accent);font-size:.95rem">🎭 Generated Animation Script</h4>
+        <div style="display:flex;gap:8px">
+          <button class="flow-btn" onclick="copyModalScript()">📋 Copy</button>
+          <button class="flow-btn" onclick="downloadModalScript()">💾 Download</button>
+        </div>
+      </div>
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px">
+        <strong style="color:var(--accent)">Main Character:</strong> ${mainCharEmoji} ${mainCharName} · 
+        <strong style="color:var(--accent)">Setting:</strong> ${setting} · 
+        <strong style="color:var(--accent)">Scenes:</strong> ${scenes.length} · 
+        <strong style="color:var(--accent)">Characters:</strong> ${animStudioChars.length}
+      </div>
+    </div>
+    ${scenes.map(s => `
+      <div class="anim-scene">
+        <div class="anim-scene-header">
+          <div class="anim-scene-num">${s.num}</div>
+          <div class="anim-scene-title">${s.title}</div>
+        </div>
+        <div class="anim-scene-setting">📍 ${s.setting}</div>
+        <div class="anim-dialogue">
+          <div class="speaker">${s.speaker.emoji} ${s.speaker.name} (${s.speaker.role})</div>
+          <div class="line">"${s.dialogue}"</div>
+        </div>
+        <div class="anim-visual">🎬 <strong>Visual:</strong> ${s.visual}</div>
+      </div>
+    `).join('')}
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px">
+      <h4 style="color:var(--accent);margin-bottom:8px;font-size:.9rem">📋 Google Flow Instructions</h4>
+      <ol style="font-size:.82rem;color:var(--muted);line-height:1.8;padding-left:20px">
+        <li>Open <strong style="color:var(--text)">Google Flow</strong> and create a new project</li>
+        <li>Set scene: <strong style="color:var(--text)">${setting}</strong></li>
+        <li>Add main character: <strong style="color:var(--text)">${mainCharEmoji} ${mainCharName}</strong></li>
+        <li>For each scene, add the character and paste dialogue as voiceover</li>
+        <li>Use visual directions for animations and transitions</li>
+        <li>Export as MP4 and share!</li>
+      </ol>
+    </div>
+  `;
+  output.style.display = 'block';
+  output.scrollIntoView({behavior:'smooth'});
+}
+
+function copyModalScript(){
+  const text = document.getElementById('animModalOutput').innerText;
+  navigator.clipboard.writeText(text).then(() => alert('✅ Script copied! Paste into Google Flow.'));
+}
+
+function downloadModalScript(){
+  const text = document.getElementById('animModalOutput').innerText;
+  const blob = new Blob([text], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `animation-${animStudioTopic}-${Date.now()}.txt`;
   a.click();
 }
 
