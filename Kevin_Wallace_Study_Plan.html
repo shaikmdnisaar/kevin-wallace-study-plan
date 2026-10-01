@@ -1234,7 +1234,10 @@ function generatePlannerData(){
     if (isRestDay && d > 1) {
       tasks.push({type:"rest", tag:"rest", text:"🌿 Rest Day — Light review of notes, no new content", course:"Recovery"});
       const reviews = learnedTopics.filter(t => srIntervals.some(i => t.day + i === d));
-      reviews.forEach(r => tasks.push({type:"review", tag:"review", text:`📖 Review: ${r.topic}`, course:r.title}));
+      reviews.forEach(r => {
+        const reviewUrl = getVideoUrl(r.course, r.sectionIdx, r.url);
+        tasks.push({type:"review", tag:"review", text:`📖 Review: ${r.topic}`, course:r.title, url:reviewUrl});
+      });
     } else if (todaysSections.length > 0) {
       // Add each section as a task — watch only, with individual video links
       todaysSections.forEach(s => {
@@ -1249,7 +1252,7 @@ function generatePlannerData(){
           sectionIdx:s.sectionIdx,
           url:videoUrl
         });
-        learnedTopics.push({day:d, course:s.course, title:s.title, topic:s.sectionName});
+        learnedTopics.push({day:d, course:s.course, title:s.title, topic:s.sectionName, sectionIdx:s.sectionIdx, url:s.url});
       });
     }
     
@@ -1258,7 +1261,8 @@ function generatePlannerData(){
     reviews.forEach(r => {
       const interval = srIntervals.find(i => r.day + i === d);
       const label = interval===1?"Quick Review (next day)":interval===3?"Review (3 days)":interval===7?"Review (1 week)":interval===14?"Review (2 weeks)":"Final Review (30 days)";
-      tasks.push({type:"review", tag:"review", text:`🔁 ${label}: ${r.topic}`, course:r.title});
+      const reviewUrl = getVideoUrl(r.course, r.sectionIdx, r.url);
+      tasks.push({type:"review", tag:"review", text:`🔁 ${label}: ${r.topic}`, course:r.title, url:reviewUrl});
     });
     
     // Weekend lab
