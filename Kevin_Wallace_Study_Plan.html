@@ -240,7 +240,23 @@
   <!-- DAILY PLANNER WITH SPACED REPETITION (MOVED TO TOP) -->
   <div class="section" id="plannerSection">
     <h2><span class="icon">📅</span> Daily Planner + Spaced Repetition</h2>
-    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Your day-by-day planner with built-in spaced repetition. New topics are introduced, then reviewed at increasing intervals (Day 1 → Day 3 → Day 7 → Day 14 → Day 30). Check off tasks as you complete them — your progress saves automatically!</p>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Your day-by-day planner with built-in spaced repetition. Critical courses come first! Change the deadline to see how the schedule adjusts.</p>
+
+    <!-- Deadline Selector -->
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <label style="font-size:.9rem;font-weight:600;color:var(--accent)">🎯 Deadline:</label>
+        <input type="date" id="deadlineInput" onchange="onDeadlineChange()" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:.88rem;cursor:pointer">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="flow-btn" onclick="setDeadline(1)">1 Month</button>
+          <button class="flow-btn" onclick="setDeadline(2)">2 Months</button>
+          <button class="flow-btn" onclick="setDeadline(3)" style="border-color:var(--accent);color:var(--accent)">3 Months</button>
+          <button class="flow-btn" onclick="setDeadline(6)">6 Months</button>
+        </div>
+        <span id="deadlineInfo" style="font-size:.82rem;color:var(--muted);margin-left:auto"></span>
+      </div>
+      <div id="deadlineWarning" style="display:none;margin-top:10px;padding:10px 14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:.82rem;color:#fbbf24"></div>
+    </div>
 
     <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
       <button class="flow-btn" onclick="setPlannerView('today')">📍 Today Only</button>
@@ -1059,117 +1075,142 @@ function toggleAllFlows(open){
 }
 
 // ─── DAILY PLANNER WITH SPACED REPETITION ──────────────
-// Generates a 91-day plan (Oct 1 - Dec 31) with spaced repetition reviews
-const plannerData = (() => {
-  const days = [];
+// Course order: CRITICAL first, then HIGH, then MEDIUM — sorted by importance within each tier
+const courseOrder = [
+  // CRITICAL (sorted by importance desc)
+  {course:7, title:"CCNA v1.1 (200-301) Cert Prep", imp:20, priority:"critical", durMin:1102},
+  {course:1, title:"Networking Foundations: Networking Basics", imp:10, priority:"critical", durMin:109},
+  {course:6, title:"CCST Networking (100-150) Cert Prep", imp:10, priority:"high", durMin:610},
+  {course:2, title:"Cisco Networking Foundations: Fundamentals", imp:8, priority:"critical", durMin:123},
+  {course:3, title:"Cisco Networking Foundations: IP Addressing", imp:8, priority:"critical", durMin:95},
+  {course:4, title:"Cisco Networking Foundations: Switching & Routing", imp:8, priority:"critical", durMin:110},
+  // HIGH
+  {course:8, title:"CCNP ENCOR v1.2 (350-401) Cert Prep", imp:12, priority:"high", durMin:981},
+  {course:13, title:"CCNA Cybersecurity (200-201) v1.2 Cert Prep", imp:8, priority:"high", durMin:352},
+  {course:15, title:"CCST Cybersecurity (100-160) Cert Prep", imp:7, priority:"high", durMin:386},
+  {course:5, title:"Cisco Networking Foundations: Wireless/Services/Security", imp:7, priority:"high", durMin:148},
+  {course:11, title:"Learning Subnetting", imp:6, priority:"high", durMin:95},
+  // MEDIUM
+  {course:9, title:"CCNP ENARSI (300-410) Cert Prep", imp:10, priority:"medium", durMin:801},
+  {course:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep", imp:7, priority:"medium", durMin:782},
+  {course:12, title:"Wireless Networking Essential Training", imp:5, priority:"medium", durMin:79},
+  {course:14, title:"Learning IP Addressing", imp:5, priority:"medium", durMin:40},
+];
+
+let plannerDeadline = new Date(2026, 11, 31); // Dec 31, 2026 default
+let plannerData = [];
+let plannerView = 'today';
+let plannerProgress = {};
+
+function generatePlannerData(){
   const startDate = new Date(2026, 9, 1); // Oct 1, 2026
-  const totalDays = 91;
+  const totalDays = Math.max(1, Math.ceil((plannerDeadline - startDate) / (1000*60*60*24)) + 1);
   
-  // Course schedule: which course for which day range — ordered for optimal learning
-  const courseSchedule = [
-    {start:1, end:2, course:14, title:"Learning IP Addressing"},
-    {start:3, end:4, course:11, title:"Learning Subnetting"},
-    {start:5, end:6, course:1, title:"Networking Foundations: Networking Basics"},
-    {start:7, end:9, course:2, title:"Cisco Networking Foundations: Fundamentals"},
-    {start:10, end:11, course:3, title:"Cisco Networking Foundations: IP Addressing"},
-    {start:12, end:13, course:4, title:"Cisco Networking Foundations: Switching & Routing"},
-    {start:14, end:16, course:5, title:"Cisco Networking Foundations: Wireless/Services/Security"},
-    {start:17, end:18, course:12, title:"Wireless Networking Essential Training"},
-    {start:19, end:28, course:6, title:"CCST Networking (100-150) Cert Prep"},
-    {start:29, end:48, course:7, title:"CCNA v1.1 (200-301) Cert Prep"},
-    {start:49, end:55, course:13, title:"CCNA Cybersecurity (200-201) v1.2 Cert Prep"},
-    {start:56, end:62, course:15, title:"CCST Cybersecurity (100-160) Cert Prep"},
-    {start:63, end:75, course:8, title:"CCNP ENCOR v1.2 (350-401) Cert Prep"},
-    {start:76, end:84, course:9, title:"CCNP ENARSI (300-410) Cert Prep"},
-    {start:85, end:91, course:10, title:"DevNet Associate DEVASC 1.1 (200-901) Cert Prep"},
-  ];
-
-  // Spaced repetition intervals: review on Day+1, Day+3, Day+7, Day+14, Day+30
+  // Calculate total video minutes and distribute across days
+  const totalVideoMin = courseOrder.reduce((s,c) => s + c.durMin, 0);
+  const minPerDay = totalVideoMin / totalDays;
+  
+  // Assign courses to day ranges proportionally, critical first
+  const courseSchedule = [];
+  let currentDay = 1;
+  for(const co of courseOrder){
+    const daysForCourse = Math.max(1, Math.round(co.durMin / minPerDay));
+    const end = Math.min(currentDay + daysForCourse - 1, totalDays);
+    courseSchedule.push({start:currentDay, end, course:co.course, title:co.title, priority:co.priority});
+    currentDay = end + 1;
+    if(currentDay > totalDays) break;
+  }
+  
   const srIntervals = [1, 3, 7, 14, 30];
+  const learnedTopics = [];
+  const days = [];
   
-  // Track what was learned each day for spaced repetition
-  const learnedTopics = []; // {day, course, topic}
-
   for (let d = 1; d <= totalDays; d++) {
     const date = new Date(startDate);
     date.setDate(date.getDate() + d - 1);
-    const dayOfWeek = date.getDay(); // 0=Sun, 6=Sat
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    const isRestDay = dayOfWeek === 0; // Sunday = rest/review day
+    const dayOfWeek = date.getDay();
+    const isRestDay = dayOfWeek === 0;
     
     const tasks = [];
-    
-    // Find current course
     const cs = courseSchedule.find(c => d >= c.start && d <= c.end);
     
     if (isRestDay && d > 1) {
-      // Sunday = light review day
       tasks.push({type:"rest", tag:"rest", text:"🌿 Rest Day — Light review of notes, no new content", course:"Recovery"});
-      // Add spaced reviews that fall on this day
-      const reviews = learnedTopics.filter(t => {
-        for (const interval of srIntervals) {
-          if (t.day + interval === d) return true;
-        }
-        return false;
-      });
-      reviews.forEach(r => {
-        tasks.push({type:"review", tag:"review", text:`📖 Review: ${r.topic}`, course:r.title});
-      });
+      const reviews = learnedTopics.filter(t => srIntervals.some(i => t.day + i === d));
+      reviews.forEach(r => tasks.push({type:"review", tag:"review", text:`📖 Review: ${r.topic}`, course:r.title}));
     } else if (cs) {
-      // New content day
       const dayInCourse = d - cs.start + 1;
       const sections = courseSections[cs.course] || [];
       const sectionIdx = Math.min(dayInCourse - 1, sections.length - 1);
       const topic = sections[sectionIdx] || `Section ${dayInCourse}`;
+      const priorityTag = cs.priority === 'critical' ? '🔴' : cs.priority === 'high' ? '🟡' : '🟢';
       
-      tasks.push({type:"new", tag:"new", text:`🎬 Watch: ${topic}`, course:cs.title, courseNum:cs.course, sectionIdx, url:courses.find(c=>c.n===cs.course)?.url || "#"});
-      tasks.push({type:"practice", tag:"practice", text:`✍️ Take notes + practice exercises for: ${topic}`, course:cs.title, url:courses.find(c=>c.n===cs.course)?.url || "#"});
-      
-      // Record this topic for spaced repetition
+      tasks.push({type:"new", tag:"new", text:`${priorityTag} Watch: ${topic}`, course:cs.title, courseNum:cs.course, sectionIdx, url:courses.find(c=>c.n===cs.course)?.url || "#"});
+      tasks.push({type:"practice", tag:"practice", text:`✍️ Take notes + practice: ${topic}`, course:cs.title, url:courses.find(c=>c.n===cs.course)?.url || "#"});
       learnedTopics.push({day:d, course:cs.course, title:cs.title, topic});
     }
     
-    // Add spaced repetition reviews for today
-    const reviews = learnedTopics.filter(t => {
-      if (t.day === d) return false; // Don't review what you just learned
-      for (const interval of srIntervals) {
-        if (t.day + interval === d) return true;
-      }
-      return false;
-    });
+    const reviews = learnedTopics.filter(t => t.day !== d && srIntervals.some(i => t.day + i === d));
     reviews.forEach(r => {
       const interval = srIntervals.find(i => r.day + i === d);
-      const reviewLabel = interval === 1 ? "Quick Review (next day)" : 
-                          interval === 3 ? "Review (3 days)" :
-                          interval === 7 ? "Review (1 week)" :
-                          interval === 14 ? "Review (2 weeks)" : "Final Review (30 days)";
-      tasks.push({type:"review", tag:"review", text:`🔁 ${reviewLabel}: ${r.topic}`, course:r.title});
+      const label = interval===1?"Quick Review (next day)":interval===3?"Review (3 days)":interval===7?"Review (1 week)":interval===14?"Review (2 weeks)":"Final Review (30 days)";
+      tasks.push({type:"review", tag:"review", text:`🔁 ${label}: ${r.topic}`, course:r.title});
     });
     
-    // Weekend bonus
-    if (isWeekend && !isRestDay && d > 1) {
+    if (dayOfWeek === 6 && !isRestDay && d > 1) {
       tasks.push({type:"practice", tag:"practice", text:"🔬 Weekend Lab: Hands-on practice with Packet Tracer / CML", course:"Practice"});
     }
     
-    if (tasks.length === 0) {
-      tasks.push({type:"rest", tag:"rest", text:"🌿 Buffer day — catch up or rest", course:"Recovery"});
-    }
+    if (tasks.length === 0) tasks.push({type:"rest", tag:"rest", text:"🌿 Buffer day — catch up or rest", course:"Recovery"});
     
-    days.push({
-      day: d,
-      date: date,
-      dateStr: date.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}),
-      isToday: false,
-      isRestDay,
-      tasks
-    });
+    days.push({day:d, date, dateStr:date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}), isRestDay, tasks, priority: cs?.priority});
   }
   
   return days;
-})();
+}
 
-let plannerView = 'today';
-let plannerProgress = {};
+function setDeadline(months){
+  const start = new Date(2026, 9, 1);
+  const newDeadline = new Date(start);
+  newDeadline.setMonth(newDeadline.getMonth() + months);
+  newDeadline.setDate(0); // Last day of that month
+  plannerDeadline = newDeadline;
+  document.getElementById('deadlineInput').value = newDeadline.toISOString().split('T')[0];
+  onDeadlineChange(true);
+}
+
+function onDeadlineChange(skipInput){
+  if(!skipInput){
+    const inputVal = document.getElementById('deadlineInput').value;
+    if(inputVal) plannerDeadline = new Date(inputVal);
+  }
+  
+  const start = new Date(2026, 9, 1);
+  const totalDays = Math.ceil((plannerDeadline - start) / (1000*60*60*24)) + 1;
+  const totalVideoMin = courseOrder.reduce((s,c) => s + c.durMin, 0);
+  const minPerDay = totalVideoMin / totalDays;
+  const hoursPerDay = (minPerDay / 60).toFixed(1);
+  
+  // Update info
+  document.getElementById('deadlineInfo').innerHTML = `<strong>${totalDays} days</strong> · <strong>${hoursPerDay}h/day</strong> · ${courseOrder.length} courses`;
+  
+  // Warning if too compressed
+  const warning = document.getElementById('deadlineWarning');
+  if(hoursPerDay > 3){
+    warning.style.display = 'block';
+    warning.innerHTML = `⚠️ <strong>Intensive pace!</strong> You'll need ${hoursPerDay} hours/day. Consider extending your deadline for better retention.`;
+  } else if(hoursPerDay < 0.5){
+    warning.style.display = 'block';
+    warning.innerHTML = `💡 <strong>Relaxed pace.</strong> Only ${hoursPerDay}h/day. You could finish sooner or add more practice time!`;
+  } else {
+    warning.style.display = 'none';
+  }
+  
+  // Regenerate planner
+  plannerData = generatePlannerData();
+  renderPlanner();
+  updateNotification();
+}
 
 // Load progress from localStorage
 function loadPlannerProgress(){
@@ -1431,7 +1472,8 @@ renderTracker();
 renderTips();
 renderFlowcharts();
 loadPlannerProgress();
-renderPlanner();
+document.getElementById('deadlineInput').value = plannerDeadline.toISOString().split('T')[0];
+onDeadlineChange(true);
 updateNotification();
 showNotif();
 if(localStorage.getItem('kw_notifications_enabled') === 'true'){
