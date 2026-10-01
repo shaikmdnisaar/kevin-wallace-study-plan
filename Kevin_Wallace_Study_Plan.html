@@ -1106,19 +1106,44 @@ function generatePlannerData(){
   const startDate = new Date(2026, 9, 1); // Oct 1, 2026
   const totalDays = Math.max(1, Math.ceil((plannerDeadline - startDate) / (1000*60*60*24)) + 1);
   
-  // Calculate total video minutes and distribute across days
-  const totalVideoMin = courseOrder.reduce((s,c) => s + c.durMin, 0);
-  const minPerDay = totalVideoMin / totalDays;
-  
-  // Assign courses to day ranges proportionally, critical first
-  const courseSchedule = [];
-  let currentDay = 1;
+  // Build a flat list of ALL sections across ALL courses in priority order
+  // Each entry: {course, title, priority, sectionName, sectionIdx, totalSections}
+  const allSections = [];
   for(const co of courseOrder){
-    const daysForCourse = Math.max(1, Math.round(co.durMin / minPerDay));
-    const end = Math.min(currentDay + daysForCourse - 1, totalDays);
-    courseSchedule.push({start:currentDay, end, course:co.course, title:co.title, priority:co.priority});
-    currentDay = end + 1;
-    if(currentDay > totalDays) break;
+    const sections = courseSections[co.course] || [];
+    sections.forEach((sectionName, idx) => {
+      // Skip "Introduction" and "Conclusion" as standalone tasks — merge into first/last
+      allSections.push({
+        course: co.course,
+        title: co.title,
+        priority: co.priority,
+        sectionName,
+        sectionIdx: idx,
+        totalSections: sections.length,
+        url: courses.find(c => c.n === co.course)?.url || "#"
+      });
+    });
+  }
+  
+  // Distribute sections across available days (excluding Sundays for new content)
+  // Calculate how many sections per day
+  const studyDays = [];
+  for(let d = 1; d <= totalDays; d++){
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + d - 1);
+    if(date.getDay() !== 0) studyDays.push(d); // Non-Sunday days
+  }
+  
+  const sectionsPerDay = Math.ceil(allSections.length / studyDays.length);
+  
+  // Assign sections to days
+  const daySections = {}; // dayNum -> [section, section, ...]
+  let sectionIdx = 0;
+  for(let si = 0; si < allSections.length; si++){
+    const targetDay = studyDays[Math.floor(si / sectionsPerDay)] || studyDays[studyDays.length-1];
+    if(!daySections[targetDay]) daySections[targetDay] = [];
+    daySections[targetDay].push(allSections[si]);
+    sectionIdx++;
   }
   
   const srIntervals = [1, 3, 7, 14, 30];
@@ -1132,24 +1157,36 @@ function generatePlannerData(){
     const isRestDay = dayOfWeek === 0;
     
     const tasks = [];
-    const cs = courseSchedule.find(c => d >= c.start && d <= c.end);
+    const todaysSections = daySections[d] || [];
     
     if (isRestDay && d > 1) {
       tasks.push({type:"rest", tag:"rest", text:"🌿 Rest Day — Light review of notes, no new content", course:"Recovery"});
       const reviews = learnedTopics.filter(t => srIntervals.some(i => t.day + i === d));
       reviews.forEach(r => tasks.push({type:"review", tag:"review", text:`📖 Review: ${r.topic}`, course:r.title}));
-    } else if (cs) {
-      const dayInCourse = d - cs.start + 1;
-      const sections = courseSections[cs.course] || [];
-      const sectionIdx = Math.min(dayInCourse - 1, sections.length - 1);
-      const topic = sections[sectionIdx] || `Section ${dayInCourse}`;
-      const priorityTag = cs.priority === 'critical' ? '🔴' : cs.priority === 'high' ? '🟡' : '🟢';
-      
-      tasks.push({type:"new", tag:"new", text:`${priorityTag} Watch: ${topic}`, course:cs.title, courseNum:cs.course, sectionIdx, url:courses.find(c=>c.n===cs.course)?.url || "#"});
-      tasks.push({type:"practice", tag:"practice", text:`✍️ Take notes + practice: ${topic}`, course:cs.title, url:courses.find(c=>c.n===cs.course)?.url || "#"});
-      learnedTopics.push({day:d, course:cs.course, title:cs.title, topic});
+    } else if (todaysSections.length > 0) {
+      // Add each section as a task
+      todaysSections.forEach(s => {
+        const priorityTag = s.priority === 'critical' ? '🔴' : s.priority === 'high' ? '🟡' : '🟢';
+        const sectionNum = s.sectionIdx + 1;
+        tasks.push({
+          type:"new", tag:"new",
+          text:`${priorityTag} Lesson ${sectionNum}/${s.totalSections}: ${s.sectionName}`,
+          course:s.title,
+          courseNum:s.course,
+          sectionIdx:s.sectionIdx,
+          url:s.url
+        });
+        tasks.push({
+          type:"practice", tag:"practice",
+          text:`✍️ Notes + practice: ${s.sectionName}`,
+          course:s.title,
+          url:s.url
+        });
+        learnedTopics.push({day:d, course:s.course, title:s.title, topic:s.sectionName});
+      });
     }
     
+    // Spaced repetition reviews
     const reviews = learnedTopics.filter(t => t.day !== d && srIntervals.some(i => t.day + i === d));
     reviews.forEach(r => {
       const interval = srIntervals.find(i => r.day + i === d);
@@ -1157,13 +1194,21 @@ function generatePlannerData(){
       tasks.push({type:"review", tag:"review", text:`🔁 ${label}: ${r.topic}`, course:r.title});
     });
     
+    // Weekend lab
     if (dayOfWeek === 6 && !isRestDay && d > 1) {
       tasks.push({type:"practice", tag:"practice", text:"🔬 Weekend Lab: Hands-on practice with Packet Tracer / CML", course:"Practice"});
     }
     
-    if (tasks.length === 0) tasks.push({type:"rest", tag:"rest", text:"🌿 Buffer day — catch up or rest", course:"Recovery"});
+    if (tasks.length === 0) tasks.push({type:"rest", tag:"rest", text:"🌿 Buffer day — catch up or review", course:"Recovery"});
     
-    days.push({day:d, date, dateStr:date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}), isRestDay, tasks, priority: cs?.priority});
+    const cs = todaysSections[0];
+    days.push({
+      day:d, date,
+      dateStr:date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}),
+      isRestDay,
+      tasks,
+      priority: cs?.priority
+    });
   }
   
   return days;
