@@ -176,6 +176,23 @@
   .drama-anim strong{color:var(--accent)}
   .drama-priority{font-size:.68rem;padding:2px 8px;border-radius:6px;font-weight:600;flex-shrink:0}
 
+  /* Animation Generator */
+  .anim-scene{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
+  .anim-scene-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .anim-scene-num{background:var(--accent);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0}
+  .anim-scene-title{font-weight:700;color:var(--text);font-size:.9rem}
+  .anim-scene-setting{font-size:.78rem;color:var(--muted);margin-bottom:10px;padding:6px 12px;background:var(--card2);border-radius:6px;border-left:3px solid var(--accent2)}
+  .anim-dialogue{margin-bottom:8px;padding:10px 14px;background:var(--card2);border-radius:8px;border-left:3px solid var(--accent)}
+  .anim-dialogue .speaker{font-weight:700;color:var(--accent);font-size:.82rem;margin-bottom:2px}
+  .anim-dialogue .line{font-size:.85rem;color:var(--text);line-height:1.5;font-style:italic}
+  .anim-visual{font-size:.78rem;color:var(--muted);padding:8px 12px;background:rgba(79,156,255,.05);border-radius:6px;border:1px solid rgba(79,156,255,.15);margin-top:8px}
+  .anim-visual strong{color:var(--accent)}
+  .anim-char-card{display:flex;gap:12px;align-items:center;padding:10px 14px;background:var(--card2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--accent2)}
+  .anim-char-card .emoji{font-size:1.6rem;flex-shrink:0}
+  .anim-char-card .name{font-weight:700;color:var(--text);font-size:.85rem}
+  .anim-char-card .role{font-size:.72rem;color:var(--accent)}
+  .anim-char-card .desc{font-size:.78rem;color:var(--muted)}
+
   /* Path diagram */
   .path-diagram{text-align:center;padding:10px 0}
   .path-node{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 24px;margin:6px;font-size:.85rem}
@@ -450,6 +467,57 @@
     </div>
 
     <div id="dramaContainer"></div>
+  </div>
+
+  <!-- TRANSCRIPT TO ANIMATION GENERATOR -->
+  <div class="section">
+    <h2><span class="icon">🎬</span> Transcript → Animation Generator</h2>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px">Paste the transcript from any LinkedIn Learning video. The generator will identify the main character, extract key technical concepts, and create a Google Flow animation script with dialogue, scene descriptions, and visual directions.</p>
+
+    <!-- Step 1: Input -->
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px">
+      <h4 style="color:var(--accent);margin-bottom:10px;font-size:.95rem">📝 Step 1: Paste Video Transcript</h4>
+      <textarea id="transcriptInput" placeholder="Paste the transcript from the LinkedIn Learning video here...
+
+Example:
+'In this lesson, we're going to talk about the OSI model. The OSI model has seven layers. Layer 1 is the physical layer, which deals with cables and electrical signals. Layer 2 is the data link layer...'"
+        style="width:100%;min-height:150px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-size:.88rem;font-family:inherit;resize:vertical;margin-bottom:12px"></textarea>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <select id="topicSelect" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:.85rem;cursor:pointer">
+          <option value="auto">🤖 Auto-detect topic</option>
+          <option value="osi">🏗️ OSI Model</option>
+          <option value="subnetting">🥷 Subnetting</option>
+          <option value="vlan">🏢 VLANs & Trunking</option>
+          <option value="stp">🌳 Spanning Tree Protocol</option>
+          <option value="ospf">🗺️ OSPF Routing</option>
+          <option value="nat">🔄 NAT</option>
+          <option value="acl">🛡️ ACLs</option>
+          <option value="dhcp">🏨 DHCP</option>
+          <option value="bgp">🌍 BGP</option>
+          <option value="ipv6">📱 IPv6</option>
+          <option value="vpn">🚇 VPN & IPsec</option>
+          <option value="firewall">🏰 Firewall</option>
+          <option value="automation">🤖 Automation</option>
+          <option value="wifi">📡 Wi-Fi</option>
+        </select>
+        <button class="notif-btn notif-btn-primary" onclick="generateAnimation()">🎬 Generate Animation Script</button>
+        <button class="flow-btn" onclick="loadSampleTranscript()">📋 Load Sample</button>
+        <button class="flow-btn" onclick="document.getElementById('transcriptInput').value=''" style="border-color:rgba(239,68,68,.3);color:#f87171">🗑️ Clear</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Output -->
+    <div id="animationOutput" style="display:none;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h4 style="color:var(--accent);font-size:.95rem">🎭 Generated Animation Script</h4>
+        <div style="display:flex;gap:8px">
+          <button class="flow-btn" onclick="copyAnimationScript()">📋 Copy Script</button>
+          <button class="flow-btn" onclick="downloadAnimationScript()">💾 Download</button>
+        </div>
+      </div>
+      <div id="animationContent"></div>
+    </div>
   </div>
 
   <div style="text-align:center;color:var(--muted);font-size:.8rem;padding:20px 0 40px">
@@ -1800,6 +1868,282 @@ function toggleDrama(i){
 function filterDrama(filter){
   dramaFilter = filter;
   renderDrama();
+}
+
+// ─── TRANSCRIPT TO ANIMATION GENERATOR ──────────────────
+const topicCharacterMap = {
+  osi: {mainChar:"Lord OSI",emoji:"🏗️",setting:"A 7-story office building",chars:[
+    {emoji:"🧱",name:"Physical Pete",role:"Layer 1"},
+    {emoji:"📦",name:"Data Link Dana",role:"Layer 2"},
+    {emoji:"🛣️",name:"Network Ray",role:"Layer 3"},
+    {emoji:"🚚",name:"Transport Tom",role:"Layer 4"},
+    {emoji:"🤝",name:"Session Sam",role:"Layer 5"},
+    {emoji:"📄",name:"Presentation Pam",role:"Layer 6"},
+    {emoji:"👩‍💼",name:"Application Amy",role:"Layer 7"},
+  ]},
+  subnetting: {mainChar:"Subnet Ninja",emoji:"🥷",setting:"A pizzeria kitchen",chars:[
+    {emoji:"🍕",name:"Pizza Chef Pietro",role:"Network Owner"},
+    {emoji:"🥷",name:"Subnet Ninja",role:"The Slicer"},
+    {emoji:"👨‍💼",name:"Manager Mike",role:"Department Head"},
+  ]},
+  vlan: {mainChar:"VLAN Valerie",emoji:"🏢",setting:"An office building with invisible walls",chars:[
+    {emoji:"🏢",name:"Building Manager Bea",role:"Switch Admin"},
+    {emoji:"🚪",name:"VLAN Valerie",role:"Interior Designer"},
+    {emoji:"🛤️",name:"Trunk Tom",role:"Elevator Operator"},
+  ]},
+  stp: {mainChar:"STP Inspector Steve",emoji:"🌳",setting:"A network of bridges",chars:[
+    {emoji:"🌳",name:"Root Bridge Regina",role:"Elected Leader"},
+    {emoji:"🔍",name:"STP Inspector Steve",role:"Loop Preventer"},
+    {emoji:"🚦",name:"Port Patrol Paula",role:"Traffic Light"},
+    {emoji:"💥",name:"Broadcast Storm Boris",role:"The Villain"},
+  ]},
+  ospf: {mainChar:"Mapmaker Olivia",emoji:"🗺️",setting:"A cartographer's guild",chars:[
+    {emoji:"🗺️",name:"Mapmaker Olivia",role:"Link-State Advertiser"},
+    {emoji:"🤝",name:"Neighbor Nick",role:"Adjacency Builder"},
+    {emoji:"👑",name:"DR Derek",role:"Designated Router"},
+    {emoji:"🧮",name:"SPF Calculator Sam",role:"Shortest Path Finder"},
+  ]},
+  nat: {mainChar:"NAT Nat",emoji:"📮",setting:"A post office",chars:[
+    {emoji:"🏠",name:"Private Pete",role:"Internal User"},
+    {emoji:"📮",name:"NAT Nat",role:"Post Office Manager"},
+    {emoji:"📬",name:"PAT Pat",role:"Port Number Sorter"},
+  ]},
+  acl: {mainChar:"ACL Anna",emoji:"🛡️",setting:"A nightclub door",chars:[
+    {emoji:"🛡️",name:"ACL Anna",role:"Head Bouncer"},
+    {emoji:"📋",name:"Standard Stan",role:"Simple Checker"},
+    {emoji:"🔍",name:"Extended Erica",role:"Thorough Inspector"},
+    {emoji:"🚫",name:"Deny Dan",role:"The Rejection"},
+  ]},
+  dhcp: {mainChar:"DHCP Derek",emoji:"🏨",setting:"A hotel lobby",chars:[
+    {emoji:"📢",name:"Client Carl",role:"New Guest"},
+    {emoji:"🏨",name:"DHCP Derek",role:"Hotel Manager"},
+  ]},
+  bgp: {mainChar:"BGP Barbara",emoji:"🤵",setting:"A diplomatic summit",chars:[
+    {emoji:"🤵",name:"BGP Barbara",role:"Chief Diplomat"},
+    {emoji:"🏛️",name:"AS-100 Aldo",role:"Country Rep"},
+    {emoji:"📊",name:"Path Attributes Pam",role:"Decision Maker"},
+  ]},
+  ipv6: {mainChar:"IPv6 Iris",emoji:"📱",setting:"A phone company office",chars:[
+    {emoji:"📞",name:"IPv4 Ian",role:"Old Phone System"},
+    {emoji:"📱",name:"IPv6 Iris",role:"New Phone System"},
+    {emoji:"🔄",name:"Dual-Stack Daisy",role:"Translator"},
+  ]},
+  vpn: {mainChar:"IPsec Iris",emoji:"🚇",setting:"A secret tunnel entrance",chars:[
+    {emoji:"🕵️",name:"Sender Sam",role:"Secret Agent"},
+    {emoji:"🚇",name:"IPsec Iris",role:"Tunnel Builder"},
+    {emoji:"🔑",name:"IKE Igor",role:"Key Exchange Agent"},
+    {emoji:"👹",name:"Hacker Hank",role:"The Eavesdropper"},
+  ]},
+  firewall: {mainChar:"Firewall Fiona",emoji:"🏰",setting:"A castle with a moat",chars:[
+    {emoji:"🏰",name:"Firewall Fiona",role:"Castle Gatekeeper"},
+    {emoji:"📋",name:"Stateful Simon",role:"State Tracker"},
+    {emoji:"🔍",name:"IDS Iris",role:"Intrusion Detection"},
+    {emoji:"⚔️",name:"IPS Ivan",role:"Intrusion Prevention"},
+  ]},
+  automation: {mainChar:"Python Pete",emoji:"🤖",setting:"A network operations center",chars:[
+    {emoji:"🤖",name:"Python Pete",role:"Automation Engineer"},
+    {emoji:"🔌",name:"NETCONF Nora",role:"Protocol Specialist"},
+    {emoji:"🌐",name:"REST API Rachel",role:"Web Communicator"},
+    {emoji:"📝",name:"Ansible Alex",role:"Playbook Writer"},
+  ]},
+  wifi: {mainChar:"Frequency Fiona",emoji:"📡",setting:"A radio station",chars:[
+    {emoji:"📻",name:"Frequency Fiona",role:"Radio DJ"},
+    {emoji:"📶",name:"SSID Sam",role:"Station Name"},
+    {emoji:"🔐",name:"WPA3 Wendy",role:"Security Guard"},
+    {emoji:"🏢",name:"WLC Will",role:"Wireless Controller"},
+  ]},
+};
+
+function detectTopic(transcript){
+  const t = transcript.toLowerCase();
+  if(t.includes('osi') && t.includes('layer')) return 'osi';
+  if(t.includes('subnet') || t.includes('subnet mask') || t.includes('cidr')) return 'subnetting';
+  if(t.includes('vlan') || t.includes('trunk') || t.includes('802.1q')) return 'vlan';
+  if(t.includes('spanning tree') || t.includes('stp') || t.includes('root bridge')) return 'stp';
+  if(t.includes('ospf') || t.includes('link-state') || t.includes('lsa')) return 'ospf';
+  if(t.includes('nat') || t.includes('network address translation') || t.includes('pat')) return 'nat';
+  if(t.includes('acl') || t.includes('access control list') || t.includes('permit') && t.includes('deny')) return 'acl';
+  if(t.includes('dhcp') || t.includes('dynamic host')) return 'dhcp';
+  if(t.includes('bgp') || t.includes('autonomous system') || t.includes('as_path')) return 'bgp';
+  if(t.includes('ipv6') || t.includes('128 bit') || t.includes('hexadecimal')) return 'ipv6';
+  if(t.includes('vpn') || t.includes('ipsec') || t.includes('tunnel') || t.includes('encryption')) return 'vpn';
+  if(t.includes('firewall') || t.includes('ids') || t.includes('ips') || t.includes('intrusion')) return 'firewall';
+  if(t.includes('python') || t.includes('automation') || t.includes('ansible') || t.includes('netconf')) return 'automation';
+  if(t.includes('wireless') || t.includes('wi-fi') || t.includes('802.11') || t.includes('ssid')) return 'wifi';
+  return 'osi'; // default
+}
+
+function splitTranscriptIntoScenes(transcript, maxScenes){
+  // Split by sentences and group into scenes
+  const sentences = transcript.match(/[^.!?]+[.!?]+/g) || [transcript];
+  const scenes = [];
+  const sentencesPerScene = Math.max(1, Math.ceil(sentences.length / maxScenes));
+  for(let i = 0; i < sentences.length; i += sentencesPerScene){
+    scenes.push(sentences.slice(i, i + sentencesPerScene).join(' ').trim());
+  }
+  return scenes.slice(0, maxScenes);
+}
+
+function generateAnimation(){
+  const transcript = document.getElementById('transcriptInput').value.trim();
+  if(!transcript || transcript.length < 20){
+    alert('Please paste a transcript with at least a few sentences.');
+    return;
+  }
+
+  const selectedTopic = document.getElementById('topicSelect').value;
+  const topicKey = selectedTopic === 'auto' ? detectTopic(transcript) : selectedTopic;
+  const charData = topicCharacterMap[topicKey] || topicCharacterMap.osi;
+  const drama = dramaConcepts.find(d => d.topic.toLowerCase().includes(topicKey)) || dramaConcepts[0];
+
+  // Split transcript into 3-6 scenes
+  const sceneTexts = splitTranscriptIntoScenes(transcript, 5);
+  
+  // Generate scenes
+  const scenes = sceneTexts.map((text, i) => {
+    const charIdx = i % charData.chars.length;
+    const speaker = charData.chars[charIdx];
+    const nextCharIdx = (i + 1) % charData.chars.length;
+    const nextSpeaker = charData.chars[nextCharIdx];
+    
+    return {
+      num: i + 1,
+      title: `Scene ${i+1}: ${getSceneTitle(text, topicKey)}`,
+      setting: getSceneSetting(i, charData.setting),
+      speaker: speaker,
+      dialogue: transformToDialogue(text, speaker, topicKey),
+      visual: getVisualDirection(text, i, topicKey, charData)
+    };
+  });
+
+  // Build HTML output
+  const output = document.getElementById('animationContent');
+  output.innerHTML = `
+    <!-- Character Summary -->
+    <div style="margin-bottom:16px">
+      <h4 style="color:var(--accent);margin-bottom:10px;font-size:.9rem">🎭 Main Character: ${charData.emoji} ${charData.mainChar}</h4>
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Setting: ${charData.setting} · Topic: ${topicKey.toUpperCase()} · ${scenes.length} scenes</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+        ${charData.chars.map(c => `
+          <div class="anim-char-card">
+            <div class="emoji">${c.emoji}</div>
+            <div>
+              <div class="name">${c.name}</div>
+              <div class="role">${c.role}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Scenes -->
+    ${scenes.map(s => `
+      <div class="anim-scene">
+        <div class="anim-scene-header">
+          <div class="anim-scene-num">${s.num}</div>
+          <div class="anim-scene-title">${s.title}</div>
+        </div>
+        <div class="anim-scene-setting">📍 ${s.setting}</div>
+        <div class="anim-dialogue">
+          <div class="speaker">${s.speaker.emoji} ${s.speaker.name} (${s.speaker.role})</div>
+          <div class="line">"${s.dialogue}"</div>
+        </div>
+        <div class="anim-visual">🎬 <strong>Visual:</strong> ${s.visual}</div>
+      </div>
+    `).join('')}
+
+    <!-- Google Flow Instructions -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px">
+      <h4 style="color:var(--accent);margin-bottom:8px;font-size:.9rem">📋 Google Flow Animation Instructions</h4>
+      <ol style="font-size:.82rem;color:var(--muted);line-height:1.8;padding-left:20px">
+        <li>Open <strong style="color:var(--text)">Google Flow</strong> and create a new project</li>
+        <li>Set the scene: <strong style="color:var(--text)">${charData.setting}</strong></li>
+        <li>Add the main character: <strong style="color:var(--text)">${charData.emoji} ${charData.mainChar}</strong></li>
+        <li>For each scene, add the character and paste the dialogue as the voiceover text</li>
+        <li>Use the visual directions to set up animations and transitions</li>
+        <li>Export as MP4 and share!</li>
+      </ol>
+    </div>
+  `;
+
+  document.getElementById('animationOutput').style.display = 'block';
+  document.getElementById('animationOutput').scrollIntoView({behavior:'smooth'});
+}
+
+function getSceneTitle(text, topicKey){
+  const words = text.split(' ').slice(0, 5).join(' ');
+  return words.charAt(0).toUpperCase() + words.slice(1) + '...';
+}
+
+function getSceneSetting(sceneIdx, baseSetting){
+  const settings = [
+    `Wide shot of ${baseSetting}`,
+    `Close-up inside ${baseSetting}`,
+    `Action sequence in ${baseSetting}`,
+    `Dramatic reveal in ${baseSetting}`,
+    `Conclusion and summary in ${baseSetting}`
+  ];
+  return settings[sceneIdx % settings.length];
+}
+
+function transformToDialogue(text, speaker, topicKey){
+  // Transform transcript text into character dialogue
+  let dialogue = text;
+  
+  // Remove filler words
+  dialogue = dialogue.replace(/\b(um|uh|so|okay|right|now|well|basically|essentially|you know|kind of|sort of)\b/gi, '');
+  
+  // Clean up multiple spaces
+  dialogue = dialogue.replace(/\s+/g, ' ').trim();
+  
+  // Add character voice based on role
+  const role = speaker.role.toLowerCase();
+  if(role.includes('layer 1') || role.includes('physical')){
+    dialogue = dialogue.replace(/\bdata\b/gi, 'packages').replace(/\bcables\b/gi, 'my cables');
+  } else if(role.includes('ninja') || role.includes('slicer')){
+    dialogue = dialogue.replace(/\bsubnet\b/gi, 'slice').replace(/\bmask\b/gi, 'blade');
+  } else if(role.includes('bouncer') || role.includes('checker')){
+    dialogue = dialogue.replace(/\bpacket\b/gi, 'visitor').replace(/\bdeny\b/gi, 'rejected');
+  } else if(role.includes('manager') || role.includes('hotel')){
+    dialogue = dialogue.replace(/\baddress\b/gi, 'room number').replace(/\bassign\b/gi, 'check in');
+  }
+  
+  // Limit length
+  if(dialogue.length > 300) dialogue = dialogue.substring(0, 297) + '...';
+  
+  return dialogue;
+}
+
+function getVisualDirection(text, sceneIdx, topicKey, charData){
+  const visuals = [
+    `Start with a wide establishing shot of ${charData.setting}. The main character ${charData.mainChar} (${charData.emoji}) enters from the left. Camera pans slowly as they begin speaking. Add a title card with the topic name.`,
+    `Zoom in on ${charData.mainChar} as they explain the concept. Use animated diagrams appearing beside them — arrows, labels, and color-coded elements that match what they're saying. Add floating text for key terms.`,
+    `Cut to a dynamic action shot. Show the technical process happening in real-time — data flowing, packets moving, configurations being applied. Use motion graphics to visualize the concept. ${charData.mainChar} gestures toward the animation.`,
+    `Split screen: ${charData.mainChar} on the left explaining, and an animated diagram on the right showing the technical concept in action. Use color transitions (green=success, red=failure) to show outcomes.`,
+    `Final shot: ${charData.mainChar} stands center frame. A summary of key points appears as bullet points beside them. Fade to a "Key Takeaways" card with the main concepts listed. End with the course logo.`
+  ];
+  return visuals[sceneIdx % visuals.length];
+}
+
+function loadSampleTranscript(){
+  document.getElementById('transcriptInput').value = `In this lesson, we're going to talk about the OSI model. The OSI reference model has seven layers, and it helps us understand how data moves through a network. Layer 1 is the physical layer. This is where we deal with cables, connectors, and electrical signals. Think of it as the physical infrastructure that carries bits from one device to another. Layer 2 is the data link layer. This layer is responsible for moving data between adjacent nodes on the same network. It uses MAC addresses to identify devices and switches to forward frames. Layer 3 is the network layer. This is where IP addressing and routing happen. Routers operate at this layer, making decisions about the best path for packets to take across the network. Layer 4 is the transport layer. TCP and UDP live here. TCP provides reliable, connection-oriented delivery, while UDP provides fast, connectionless delivery. And then we have layers 5, 6, and 7 — session, presentation, and application — which handle things like sessions, data formatting, and the interfaces that users actually interact with.`;
+  document.getElementById('topicSelect').value = 'osi';
+}
+
+function copyAnimationScript(){
+  const content = document.getElementById('animationContent').innerText;
+  navigator.clipboard.writeText(content).then(() => {
+    alert('✅ Animation script copied to clipboard! Paste it into Google Flow.');
+  });
+}
+
+function downloadAnimationScript(){
+  const content = document.getElementById('animationContent').innerText;
+  const blob = new Blob([content], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'google-flow-animation-script.txt';
+  a.click();
 }
 
 // ─── INIT ───────────────────────────────────────────────
