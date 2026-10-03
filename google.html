@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google — Antigravity Preview</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#202124;
+    color:#e8eaed;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  header{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    padding:16px 24px;
+    gap:16px;
+    font-size:13px;
+  }
+  header a{
+    color:#e8eaed;
+    text-decoration:none;
+  }
+  header a:hover{text-decoration:underline}
+  .app-btn{
+    background:#8ab4f8;
+    color:#202124;
+    padding:8px 20px;
+    border-radius:4px;
+    font-weight:500;
+    text-decoration:none;
+  }
+  main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    margin-top:-60px;
+  }
+  .logo{
+    font-size:5.5rem;
+    font-weight:600;
+    letter-spacing:-2px;
+    margin-bottom:28px;
+    user-select:none;
+    display:flex;
+  }
+  .logo span:nth-child(1){color:#4285f4}
+  .logo span:nth-child(2){color:#ea4335}
+  .logo span:nth-child(3){color:#fbbc05}
+  .logo span:nth-child(4){color:#4285f4}
+  .logo span:nth-child(5){color:#34a853}
+  .logo span:nth-child(6){color:#ea4335}
+  .search-box{
+    width:100%;
+    max-width:584px;
+    display:flex;
+    align-items:center;
+    background:#303134;
+    border:1px solid #5f6368;
+    border-radius:24px;
+    padding:12px 18px;
+    gap:12px;
+    box-shadow:0 1px 6px rgba(0,0,0,.2);
+    transition:background .2s, box-shadow .2s;
+  }
+  .search-box:focus-within{
+    background:#303134;
+    border-color:transparent;
+    box-shadow:0 1px 8px 1px rgba(0,0,0,.4);
+  }
+  .search-icon{color:#9aa0a6;width:20px;height:20px}
+  .search-input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:#e8eaed;
+    font-size:16px;
+  }
+  .buttons{
+    display:flex;
+    gap:12px;
+    margin-top:28px;
+  }
+  .btn{
+    background:#303134;
+    border:1px solid #303134;
+    color:#e8eaed;
+    font-size:14px;
+    padding:10px 18px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:border-color .15s;
+  }
+  .btn:hover{
+    border-color:#5f6368;
+  }
+  .tip{
+    margin-top:30px;
+    font-size:13px;
+    color:#9aa0a6;
+    background:rgba(255,255,255,0.04);
+    padding:8px 16px;
+    border-radius:20px;
+    border:1px solid #3c4043;
+  }
+  .tip code{
+    color:#8ab4f8;
+    font-weight:600;
+  }
+  footer{
+    background:#171717;
+    color:#9aa0a6;
+    font-size:14px;
+    padding:12px 24px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="http://localhost:5500/">📚 Study Plan</a>
+  <a href="http://localhost:9999/">🌐 Live Google Proxy</a>
+  <a href="https://www.google.com" target="_blank" class="app-btn">Open Chrome ↗</a>
+</header>
+
+<main>
+  <div class="logo">
+    <span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span>
+  </div>
+
+  <form id="searchForm" class="search-box" onsubmit="handleSearch(event)">
+    <svg class="search-icon" focusable="false" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+    <input type="text" id="query" class="search-input" placeholder="Search Google or type a URL..." autofocus>
+  </form>
+
+  <div class="buttons">
+    <button class="btn" onclick="executeSearch()">Google Search</button>
+    <button class="btn" onclick="openDirectProxy()">Live Google (Proxy)</button>
+  </div>
+
+  <div class="tip">
+    ⚡ Running inside <strong>Antigravity Preview</strong> · Works with local proxy at <code>http://localhost:9999</code>
+  </div>
+</main>
+
+<footer>
+  <div>Antigravity IDE Preview Mode</div>
+  <div><a href="http://localhost:5500/" style="color:#8ab4f8;text-decoration:none">Back to Study Plan</a></div>
+</footer>
+
+<script>
+function handleSearch(e){
+  e.preventDefault();
+  executeSearch();
+}
+function executeSearch(){
+  const q = document.getElementById('query').value.trim();
+  if(!q) return;
+  window.location.href = 'http://localhost:9999/search?q=' + encodeURIComponent(q);
+}
+function openDirectProxy(){
+  window.location.href = 'http://localhost:9999/';
+}
+</script>
+</body>
+</html>
